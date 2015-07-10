@@ -268,19 +268,27 @@ angular.module('adf')
         $scope.timestamp = Date.now();
 
         $scope.toggleEditMode = function() {
-          $scope.editMode = !$scope.editMode;
-          if ($scope.editMode) {
-            $scope.modelCopy = angular.copy($scope.adfModel, {});
-          }
+			$scope.editMode = !$scope.editMode;
+			$scope.toggleDashboardEditMode = $scope.editMode;
 
-          if (!$scope.editMode) {
-            $rootScope.$broadcast('adfDashboardChanged', name, model);
-          }
+			if ($scope.editMode) {
+				$scope.modelCopy = angular.copy($scope.adfModel, {});
+			}
+
+			if (!$scope.editMode) {
+				//$rootScope.$broadcast('adfDashboardChanged', name, model);
+			}
         };
 
+		$scope.saveChanges = function () {
+            $scope.toggleDashboardEditMode = false;
+            $rootScope.$broadcast('adfDashboardSaveChanges', name, model);
+        };
+		
         $scope.cancelEditMode = function() {
-          $scope.editMode = false;
-          $scope.modelCopy = angular.copy($scope.modelCopy, $scope.adfModel);
+            $scope.toggleDashboardEditMode = false;
+            $scope.modelCopy = angular.copy($scope.modelCopy, $scope.adfModel);
+            $rootScope.$broadcast('adfDashboardCancelChanges', name, model);
         };
 
         // edit dashboard settings
