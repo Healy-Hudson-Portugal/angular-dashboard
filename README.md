@@ -1,33 +1,22 @@
 # angular-dashboard-framework
 
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/angular-dashboard-framework/angular-dashboard-framework/blob/master/LICENSE.md) [![Build Status](https://travis-ci.org/angular-dashboard-framework/angular-dashboard-framework.svg?branch=master)](https://travis-ci.org/angular-dashboard-framework/angular-dashboard-framework) [![Coverage Status](https://coveralls.io/repos/angular-dashboard-framework/angular-dashboard-framework/badge.svg?branch=master&service=github)](https://coveralls.io/github/angular-dashboard-framework/angular-dashboard-framework?branch=master) [![Dependency Status](https://www.versioneye.com/user/projects/562008b836d0ab001900070b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/562008b836d0ab001900070b) [![Join the chat at https://gitter.im/sdorra/angular-dashboard-framework](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-dashboard-framework/angular-dashboard-framework?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 > Dashboard framework with Angular.js and Twitter Bootstrap.
 
-The api of angular-dashboard-framework (adf) is documented [here](http://sdorra.github.io/angular-dashboard-framework/docs/). A getting
-started guide can be found [here](https://github.com/sdorra/angular-dashboard-framework/wiki/Getting-started).
+The api of angular-dashboard-framework (adf) is documented [here](http://angular-dashboard-framework.github.io/angular-dashboard-framework/docs/). A getting
+started guide can be found [here](https://github.com/angular-dashboard-framework/angular-dashboard-framework/wiki/Getting-started).
 Follow me ([@ssdorra](https://twitter.com/ssdorra)) on twitter for latest updates and news about adf.
 
 ## Demo
 
-A live demo of the adf can be viewed [here](http://sdorra.github.io/angular-dashboard-framework/). The demo uses html5 localStorage to store the state of the dashboard. The source of the demo can be found [here](https://github.com/sdorra/angular-dashboard-framework/tree/master/sample).
+A live demo of the adf can be viewed [here](http://angular-dashboard-framework.github.io/angular-dashboard-framework/). The demo uses html5 localStorage to store the state of the dashboard. The source of the demo can be found [here](https://github.com/angular-dashboard-framework/angular-dashboard-framework/tree/master/sample).
 
-A more dynamic example can be found [here](https://github.com/sdorra/adf-dynamic-example).
+A more dynamic example can be found [here](https://github.com/angular-dashboard-framework/adf-dynamic-example).
 
 ## Build from source
 
-Install bower and grunt:
+Install bower and gulp:
 
 ```bash
 npm install -g bower
@@ -37,11 +26,11 @@ npm install -g gulp
 Clone the repository:
 
 ```bash
-git clone https://github.com/sdorra/angular-dashboard-framework
+git clone https://github.com/angular-dashboard-framework/angular-dashboard-framework
 cd angular-dashboard-framework
 ```
 
-Install npm and bower dependencies:
+Install dependencies:
 
 ```bash
 npm install
@@ -69,6 +58,11 @@ Or you can create a release build of angular-dashboard-framework and the samples
 gulp all
 ```
 The sample and the final build of angular-dashboard-framework are now in the dist directory.
+
+
+## Contributing
+
+Please do not commit changes to the dist folder. The dist folder is only generated for releases.
 
 
 ## License

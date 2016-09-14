@@ -28,9 +28,10 @@ angular.module('sample', [
   'adf.widget.randommsg', 'adf.widget.weather',
   'adf.widget.markdown', 'adf.widget.linklist',
   'adf.widget.github', 'adf.widget.version',
-  'adf.widget.clock', 'LocalStorageModule',
+  'adf.widget.clock', 'adf.widget.travis',
+  'LocalStorageModule',
   'sample-01', 'sample-02', 'sample-03',
-  'sample-04', 'ngRoute'
+  'sample-04', 'sample-05', 'ngRoute'
 ])
 .config(function(dashboardProvider, $routeProvider, localStorageServiceProvider){
   dashboardProvider.widgetsPath('widgets/');
@@ -51,6 +52,10 @@ angular.module('sample', [
   .when('/sample/04', {
     templateUrl: 'partials/sample.html',
     controller: 'sample04Ctrl'
+  })
+  .when('/sample/05', {
+    templateUrl: 'partials/sample5.html',
+    controller: 'sample05Ctrl'
   })
   .otherwise({
     redirectTo: '/sample/01'

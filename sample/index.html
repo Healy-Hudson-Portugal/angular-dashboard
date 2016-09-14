@@ -37,8 +37,9 @@
     <link href="components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
 
     <!-- dashboard style -->
-    <link href="../src/styles/main.css" rel="stylesheet">
+    <link href="../dist/angular-dashboard-framework.css" rel="stylesheet">
     <link href="widgets/clock/src/style.css" rel="stylesheet">
+    <link href="widgets/travis/dist/adf-widget-travis.css" rel="stylesheet">
     <!-- endbuild -->
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -84,9 +85,9 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">ADF</a>
+          <a class="navbar-brand" href="#/sample-01">ADF</a>
         </div>
-        <div collapse="navCollapsed" class="collapse navbar-collapse">
+        <div uib-collapse="navCollapsed" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li ng-class="navClass('sample/01')">
               <a href="#/sample/01">Sample 01</a>
@@ -99,6 +100,9 @@
             </li>
             <li ng-class="navClass('sample/04')">
               <a href="#/sample/04">Sample 04</a>
+            </li>
+            <li ng-class="navClass('sample/05')">
+              <a href="#/sample/05">Sample 05</a>
             </li>
           </ul>
         </div><!--/.nav-collapse -->
@@ -129,10 +133,15 @@
 
     <!-- scripts -->
     <script type="text/javascript" src="../src/scripts/adf.js"></script>
+    <script type="text/javascript" src="../src/scripts/adf.locale.js"></script>
+    <script type="text/javascript" src="../src/scripts/locale-constant.js"></script>
     <script type="text/javascript" src="../src/scripts/provider.js"></script>
+    <script type="text/javascript" src="../src/scripts/widget-service.js"></script>
     <script type="text/javascript" src="../src/scripts/widget-content.js"></script>
     <script type="text/javascript" src="../src/scripts/widget.js"></script>
     <script type="text/javascript" src="../src/scripts/dashboard.js"></script>
+    <script type="text/javascript" src="../src/scripts/structure-preview.js"></script>
+    <script type="text/javascript" src="../src/scripts/order-by-object-key.js"></script>
     <script type="text/javascript" src="../src/scripts/column.js"></script>
     <script type="text/javascript" src="../src/scripts/row.js"></script>
 
@@ -145,12 +154,13 @@
     <script type="text/javascript" src="scripts/sample-02.js"></script>
     <script type="text/javascript" src="scripts/sample-03.js"></script>
     <script type="text/javascript" src="scripts/sample-04.js"></script>
+    <script type="text/javascript" src="scripts/sample-05.js"></script>
 
     <!-- structures -->
     <script type="text/javascript" src="structures/base/src/base.js"></script>
 
     <!-- news widget -->
-    <script type="text/javascript" src="widgets/news/src/news.js"></script>
+    <script type="text/javascript" src="widgets/news/dist/adf-widget-news.js"></script>
 
     <!-- weather widget -->
     <script type="text/javascript" src="widgets/weather/src/weather.js"></script>
@@ -167,13 +177,15 @@
     <script type="text/javascript" src="widgets/randommsg/src/randommsg.js"></script>
 
     <!-- github widget -->
-    <script type="text/javascript" src="widgets/github/components/highcharts/adapters/standalone-framework.src.js"></script>
-    <script type="text/javascript" src="widgets/github/components/highcharts/highcharts.js"></script>
-    <script type="text/javascript" src="widgets/github/components/highcharts-ng/dist/highcharts-ng.js"></script>
+    <script type="text/javascript" src="widgets/github/components/Chart.js/Chart.js"></script>
+    <script type="text/javascript" src="widgets/github/components/angular-chart.js/dist/angular-chart.js"></script>
     <script type="text/javascript" src="widgets/github/src/github.js"></script>
     <script type="text/javascript" src="widgets/github/src/service.js"></script>
-    <script type="text/javascript" src="widgets/github/src/authorController.js"></script>
-    <script type="text/javascript" src="widgets/github/src/historyController.js"></script>
+    <script type="text/javascript" src="widgets/github/src/author.controller.js"></script>
+    <script type="text/javascript" src="widgets/github/src/commits.controller.js"></script>
+    <script type="text/javascript" src="widgets/github/src/history.controller.js"></script>
+    <script type="text/javascript" src="widgets/github/src/issues.controller.js"></script>
+    <script type="text/javascript" src="widgets/github/src/events.controller.js"></script>
 
     <!-- version widget -->
     <script type="text/javascript" src="widgets/version/src/version.js"></script>
@@ -181,6 +193,10 @@
     <!-- clock widget -->
     <script type="text/javascript" src="widgets/clock/components/moment/moment.js"></script>
     <script type="text/javascript" src="widgets/clock/src/clock.js"></script>
+
+    <!-- travis widget -->
+    <script type="text/javascript" src="widgets/travis/components/angular-md5/angular-md5.js"></script>
+    <script type="text/javascript" src="widgets/travis/dist/adf-widget-travis.js"></script>
 
     <!-- inject:js -->
     <!-- endinject -->

@@ -25,52 +25,31 @@
 'use strict';
 
 angular.module('adf')
-  .directive('adfWidgetContent', function($log, $q, $sce, $http, $templateCache,
-    $compile, $controller, $injector, dashboard) {
+  .directive('adfWidgetContent', function($log, $q, widgetService,
+          $compile, $controller, $injector, dashboard) {
 
-    function parseUrl(url){
-      var parsedUrl = url;
-      if ( url.indexOf('{widgetsPath}') >= 0 ){
-        parsedUrl = url.replace('{widgetsPath}', dashboard.widgetsPath)
-                       .replace('//', '/');
-        if (parsedUrl.indexOf('/') === 0){
-          parsedUrl = parsedUrl.substring(1);
-        }
-      }
-      return parsedUrl;
-    }
-
-    function getTemplate(widget){
-      var deferred = $q.defer();
-
-      if ( widget.template ){
-        deferred.resolve(widget.template);
-      } else if (widget.templateUrl) {
-        // try to fetch template from cache
-        var tpl = $templateCache.get(widget.templateUrl);
-        if (tpl){
-          deferred.resolve(tpl);
-        } else {
-          var url = $sce.getTrustedResourceUrl(parseUrl(widget.templateUrl));
-          $http.get(url)
-            .success(function(response){
-              // put response to cache, with unmodified url as key
-              $templateCache.put(widget.templateUrl, response);
-              deferred.resolve(response);
-            })
-            .error(function(){
-              deferred.reject('could not load template');
-            });
-        }
-      }
-
-      return deferred.promise;
+    function renderError($element, msg){
+        $log.warn(msg);
+        $element.html(dashboard.messageTemplate.replace(/{}/g, msg));
     }
 
     function compileWidget($scope, $element, currentScope) {
       var model = $scope.model;
       var content = $scope.content;
 
+      var newScope = currentScope;
+      if (!model){
+        renderError($element, 'model is undefined')
+      } else if (!content){
+        var msg = 'widget content is undefined, please have a look at your browser log';
+        renderError($element, msg);
+      } else {
+        newScope = renderWidget($scope, $element, currentScope, model, content);
+      }
+      return newScope;
+    }
+
+    function renderWidget($scope, $element, currentScope, model, content) {
       // display loading template
       $element.html(dashboard.loadingTemplate);
 
@@ -93,7 +72,7 @@ angular.module('adf')
 
       // get resolve promises from content object
       var resolvers = {};
-      resolvers.$tpl = getTemplate(content);
+      resolvers.$tpl = widgetService.getTemplate(content);
       if (content.resolve) {
         angular.forEach(content.resolve, function(promise, key) {
           if (angular.isString(promise)) {
@@ -108,12 +87,17 @@ angular.module('adf')
       $q.all(resolvers).then(function(locals) {
         angular.extend(locals, base);
 
+        // pass resolve map to template scope as defined in resolveAs
+        if (content.resolveAs){
+          templateScope[content.resolveAs] = locals;
+        }
+
         // compile & render template
         var template = locals.$tpl;
         $element.html(template);
         if (content.controller) {
           var templateCtrl = $controller(content.controller, locals);
-          if (content.controllerAs){
+          if (content.controllerAs) {
             templateScope[content.controllerAs] = templateCtrl;
           }
           $element.children().data('$ngControllerController', templateCtrl);
@@ -125,12 +109,11 @@ angular.module('adf')
         if (reason) {
           msg += ': ' + reason;
         }
-        $log.warn(msg);
-        $element.html(dashboard.messageTemplate.replace(/{}/g, msg));
+        renderError($element, msg);
       });
 
       // destroy old scope
-      if (currentScope){
+      if (currentScope) {
         currentScope.$destroy();
       }
 
@@ -147,10 +130,10 @@ angular.module('adf')
       },
       link: function($scope, $element) {
         var currentScope = compileWidget($scope, $element, null);
-        $scope.$on('widgetConfigChanged', function(){
+        $scope.$on('widgetConfigChanged', function() {
           currentScope = compileWidget($scope, $element, currentScope);
         });
-        $scope.$on('widgetReload', function(){
+        $scope.$on('widgetReload', function() {
           currentScope = compileWidget($scope, $element, currentScope);
         });
       }

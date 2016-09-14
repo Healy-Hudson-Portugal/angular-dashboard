@@ -25,18 +25,18 @@
 
 'use strict';
 
-var helper = require('./helper.js')
+var helper = require('./helper.js');
 
 describe('dashboard edit tests', function(){
 
   beforeEach(function(){
-    browser.get('http://localhost:9003/sample/index.html#/sample/03');
+    browser.get('http://localhost:9003/sample/index.html#/sample/02');
     browser.executeScript('window.localStorage.clear();');
   });
 
-  it('should have Sample 01 as default title', function(){
+  it('should have Sample 02 as default title', function(){
     var title = element(by.css('h1')).getText();
-    expect(title).toEqual('Sample 03');
+    expect(title).toEqual('Sample 02');
   });
 
   it('title should be changeable', function(){
@@ -54,7 +54,7 @@ describe('dashboard edit tests', function(){
     var title = element(by.css('h1'));
 
     // title should only change after the dialog is closed
-    expect(title.getText()).toEqual('Sample 03');
+    expect(title.getText()).toEqual('Sample 02');
 
     // close dialog
     element(by.css('button.close')).click();
@@ -68,29 +68,30 @@ describe('dashboard edit tests', function(){
     // enter edit mode
     element(by.css('h1 a')).click();
     // open edit dialog
-    element(by.css('h1 a > i.glyphicon-cog')).click();
+    element(by.css('h1 a > i.glyphicon-cog')).click().then(function(){
 
-    // wait for modal
-    helper.waitForModal(browser);
+      // wait for modal
+      helper.waitForModal(browser);
 
-    // check current selection
-    var v = element(by.css('input[type=radio]:checked')).getAttribute('value');
-    expect(v).toEqual('6-6');
+      // check current selection
+      var v = element(by.css('input[type=radio]:checked')).getAttribute('value');
+      expect(v).toEqual('6-6');
 
-    // change structure to 12/4-4-4
-    element(by.css('input[type=radio][value="12/4-4-4"]')).click().then(function(){
-      v = element(by.css('input[type=radio]:checked')).getAttribute('value');
-      expect(v).toEqual('12/4-4-4');
+      // change structure to 12/4-4-4
+      element(by.css('input[type=radio][value="12/4-4-4"]')).click().then(function(){
+        v = element(by.css('input[type=radio]:checked')).getAttribute('value');
+        expect(v).toEqual('12/4-4-4');
+      });
+
+      // close dialog
+      element(by.css('button.close')).click().then(function(){
+        // verify result
+        var columns = element.all(by.css('.column'));
+        expect(columns.count()).toEqual(4);
+        expect(columns.first().all(by.css('.widget')).count()).toEqual(1);
+        expect(columns.get(1).all(by.css('.widget')).count()).toEqual(2);
+      });
     });
-
-    // close dialog
-    element(by.css('button.close')).click();
-
-    // verify result
-    var columns = element.all(by.css('.column'));
-    expect(columns.count()).toEqual(4);
-    expect(columns.first().all(by.css('.widget')).count()).toEqual(1);
-    expect(columns.get(1).all(by.css('.widget')).count()).toEqual(1);
   });
 
 });

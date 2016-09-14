@@ -31,8 +31,8 @@
  *
  * The dashboardProvider can be used to register structures and widgets.
  */
-angular.module('adf.provider', [])
-  .provider('dashboard', function(){
+angular.module('adf.provider', ['adf.locale'])
+  .provider('dashboard', function(adfLocale){
 
     var widgets = {};
     var widgetsPath = '';
@@ -44,6 +44,28 @@ angular.module('adf.provider', [])
           <span class="sr-only">loading ...</span>\n\
         </div>\n\
       </div>';
+    var customWidgetTemplatePath = null;
+
+    // default apply function of widget.edit.apply
+    var defaultApplyFunction = function(){
+      return true;
+    };
+
+    var activeLocale = adfLocale.defaultLocale;
+    var locales = adfLocale.frameworkLocales;
+
+    function getLocales() {
+      return locales;
+    }
+
+    function getActiveLocale() {
+      return activeLocale;
+    }
+
+    function translate(label) {
+      var translation = locales[activeLocale][label];
+      return translation ? translation : label;
+    }
 
    /**
     * @ngdoc method
@@ -60,6 +82,8 @@ angular.module('adf.provider', [])
     *
     *   - `title` - `{string=}` - The title of the widget.
     *   - `description` - `{string=}` - Description of the widget.
+    *   - `category` - `{string=}` - Category of the widget.
+    *   - `collapsed` - `{boolean=}` - true if the widget should be in collapsed state. Default is false.
     *   - `config` - `{object}` - Predefined widget configuration.
     *   - `controller` - `{string=|function()=}` - Controller fn that should be
     *      associated with newly created scope of the widget or the name of a
@@ -67,6 +91,8 @@ angular.module('adf.provider', [])
     *      if passed as a string.
     *   - `controllerAs` - `{string=}` - A controller alias name. If present the controller will be
     *      published to scope under the `controllerAs` name.
+    *   - `frameless` - `{boolean=}` - false if the widget should be shown in frameless mode. The default is false.
+    *   - `styleClass` - `{object}` - space delimited string or map of classes bound to the widget.
     *   - `template` - `{string=|function()=}` - html template as a string.
     *   - `templateUrl` - `{string=}` - path to an html template.
     *   - `reload` - `{boolean=}` - true if the widget could be reloaded. The default is false.
@@ -83,20 +109,33 @@ angular.module('adf.provider', [])
     *        Otherwise if function, then it is {@link http://docs.angularjs.org/api/AUTO.$injector#invoke injected}
     *        and the return value is treated as the dependency. If the result is a promise, it is
     *        resolved before its value is injected into the controller.
+    *   - `resolveAs` - `{string=}` - The name under which the resolve map will be available
+    *      on the scope of the widget.
     *   - `edit` - `{object}` - Edit modus of the widget.
     *      - `controller` - `{string=|function()=}` - Same as above, but for the edit mode of the widget.
+    *      - `controllerAs` - `{string=}` - Same as above, but for the edit mode of the widget.
     *      - `template` - `{string=|function()=}` - Same as above, but for the edit mode of the widget.
     *      - `templateUrl` - `{string=}` - Same as above, but for the edit mode of the widget.
     *      - `resolve` - `{Object.<string, function>=}` - Same as above, but for the edit mode of the widget.
+    *      - `resolveAs` - `{string=}` - The name under which the resolve map will be available
+    *        on the scope of the widget.
     *      - `reload` - {boolean} - true if the widget should be reloaded, after the edit mode is closed.
     *        Default is true.
+    *      - `immediate` - {boolean} - The widget enters the edit mode immediately after creation. Default is false.
+    *      - `apply` - `{function()=}` - The apply function is called, before the widget is saved.
+    *        The function have to return a boolean or an promise which can be resolved to a boolean.
+    *        The function can use injection.
     *
     * @returns {Object} self
     */
     this.widget = function(name, widget){
-      var w = angular.extend({reload: false}, widget);
+      var w = angular.extend({reload: false, frameless: false}, widget);
       if ( w.edit ){
-        var edit = {reload: true};
+        var edit = {
+          reload: true,
+          immediate: false,
+          apply: defaultApplyFunction
+        };
         angular.extend(edit, w.edit);
         w.edit = edit;
       }
@@ -178,7 +217,7 @@ angular.module('adf.provider', [])
     * Changes the template which is displayed as
     * long as the widget resources are not resolved.
     *
-    * @param {string} loading template
+    * @param {string} template loading template
     *
     * @returns {Object} self
     */
@@ -186,6 +225,70 @@ angular.module('adf.provider', [])
       loadingTemplate = template;
       return this;
     };
+
+    /**
+     * @ngdoc method
+     * @name adf.dashboardProvider#customWidgetTemplatePath
+     * @propertyOf adf.dashboardProvider
+     * @description
+     *
+     * Changes the container template for the widgets
+     *
+     * @param {string} path to the custom widget template
+     *
+     * @returns {Object} self
+     */
+    this.customWidgetTemplatePath = function(templatePath) {
+      customWidgetTemplatePath = templatePath;
+      return this;
+    };
+
+    /**
+     * @ngdoc method
+     * @name adf.dashboardProvider#setLocale
+     * @methodOf adf.dashboardProvider
+     * @description
+     *
+     * Changes the locale setting of adf
+     *
+     * @param {string} ISO Language Code
+     *
+     * @returns {Object} self
+     */
+     this.setLocale = function(locale){
+       if(locales[locale]) {
+         activeLocale = locale;
+       } else {
+         throw new Error('Cannot set locale: ' + locale + '. Locale is not defined.');
+       }
+       return this;
+     };
+
+     /**
+      * @ngdoc method
+      * @name adf.dashboardProvider#addLocale
+      * @methodOf adf.dashboardProvider
+      * @description
+      *
+      * Adds a new locale to adf
+      *
+      * @param {string} ISO Language Code for the new locale
+      * @param {object} translations for the locale.
+      *
+      * @returns {Object} self
+      */
+      this.addLocale = function(locale, translations){
+        if(!angular.isString(locale)) {
+          throw new Error('locale must be an string');
+        }
+
+        if(!angular.isObject(translations)) {
+          throw new Error('translations must be an object');
+        }
+
+        locales[locale] = translations;
+        return this;
+      };
 
    /**
     * @ngdoc service
@@ -199,6 +302,10 @@ angular.module('adf.provider', [])
     * @property {Array.<Object>} structures Array of registered structures.
     * @property {string} messageTemplate Template for messages.
     * @property {string} loadingTemplate Template for widget loading.
+    * @property {method} sets locale of adf.
+    * @property {Array.<Object>} hold all of the locale translations.
+    * @property {string} the active locale setting.
+    * @property {method} translation function passed to templates.
     *
     * @returns {Object} self
     */
@@ -211,6 +318,11 @@ angular.module('adf.provider', [])
         structures: structures,
         messageTemplate: messageTemplate,
         loadingTemplate: loadingTemplate,
+        setLocale: this.setLocale,
+        locales: getLocales,
+        activeLocale: getActiveLocale,
+        translate: translate,
+        customWidgetTemplatePath: customWidgetTemplatePath,
 
         /**
          * @ngdoc method
@@ -222,8 +334,24 @@ angular.module('adf.provider', [])
          * columns and widgets in the dashboard.
          */
         id: function(){
-          return ++cid;
-        }
+          return new Date().getTime() + '-' + (++cid);
+        },
+
+        /**
+         * @ngdoc method
+         * @name adf.dashboard#idEqual
+         * @methodOf adf.dashboard
+         * @description
+         *
+         * Checks if the given ids are equal.
+         *
+         * @param {string} id widget or column id
+         * @param {string} other widget or column id
+         */
+         idEquals: function(id, other){
+           // use toString, because old ids are numbers
+           return ((id) && (other)) && (id.toString() === other.toString());
+         }
       };
     };
 

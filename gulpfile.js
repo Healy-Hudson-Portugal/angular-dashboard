@@ -28,9 +28,8 @@ var connect = require('gulp-connect');
 var modRewrite = require('connect-modrewrite');
 var $ = require('gulp-load-plugins')();
 var del = require('del');
-var jsReporter = require('jshint-stylish');
-var annotateAdfPlugin = require('ng-annotate-adf-plugin');
 var pkg = require('./package.json');
+var karmaServer = require('karma').Server;
 var name = pkg.name;
 
 var templateOptions = {
@@ -39,8 +38,8 @@ var templateOptions = {
 };
 
 var annotateOptions = {
-  plugin: [
-    annotateAdfPlugin
+  enable: [
+    'angular-dashboard-framework'
   ]
 };
 
@@ -55,7 +54,7 @@ var ngdocOptions = {
 };
 
 var protractorOptions = {
-  configFile: 'protractor.conf.js'
+  configFile: 'test/protractor.conf.js'
 };
 
 /** lint **/
@@ -68,8 +67,9 @@ gulp.task('csslint', function(){
 
 gulp.task('jslint', function(){
   gulp.src('src/scripts/*.js')
-      .pipe($.jshint())
-      .pipe($.jshint.reporter(jsReporter));
+      .pipe($.eslint())
+      .pipe($.eslint.format())
+      .pipe($.eslint.failAfterError());
 });
 
 gulp.task('lint', ['csslint', 'jslint']);
@@ -82,33 +82,47 @@ gulp.task('clean', function(cb){
 
 /** build **/
 
-gulp.task('css', function(){
-  gulp.src('src/styles/*.css')
+gulp.task('styles', function(){
+  gulp.src(['src/styles/**/*.scss'])
+      .pipe($.sass({
+        precision: 10,
+        outputStyle: 'expanded'
+      }).on('error', $.sass.logError))
       .pipe($.concat(name + '.css'))
       .pipe(gulp.dest('dist/'))
       .pipe($.rename(name + '.min.css'))
       .pipe($.minifyCss())
+      .pipe(gulp.dest('src/styles'))
       .pipe(gulp.dest('dist/'));
 });
+
+function processScripts(sources, filename){
+  sources.pipe($.sourcemaps.init())
+    .pipe($.if('*.js', $.replace('<<adfVersion>>', pkg.version)))
+    .pipe($.if('*.js', $.replace(/'use strict';/g, '')))
+    .pipe($.concat(filename + '.js'))
+    .pipe($.headerfooter('(function(window, undefined) {\'use strict\';\n', '\n})(window);'))
+    .pipe($.ngAnnotate(annotateOptions))
+    .pipe(gulp.dest('dist/'))
+    .pipe($.rename(filename + '.min.js'))
+    .pipe($.uglify())
+    .pipe($.sourcemaps.write('.'))
+    .pipe(gulp.dest('dist/'));
+}
 
 gulp.task('js', function(){
-  gulp.src(['src/scripts/*.js', 'src/templates/*.html'])
-      .pipe($.if('*.html', $.minifyHtml(minifyHtmlOptions)))
-      .pipe($.if('*.html', $.angularTemplatecache(name + '.tpl.js', templateOptions)))
-      .pipe($.sourcemaps.init())
-      .pipe($.if('*.js', $.replace('<<adfVersion>>', pkg.version)))
-      .pipe($.if('*.js', $.replace(/'use strict';/g, '')))
-      .pipe($.concat(name + '.js'))
-      .pipe($.headerfooter('(function(window, undefined) {\'use strict\';\n', '})(window);'))
-      .pipe($.ngAnnotate(annotateOptions))
-      .pipe(gulp.dest('dist/'))
-      .pipe($.rename(name + '.min.js'))
-      .pipe($.uglify())
-      .pipe($.sourcemaps.write('.'))
-      .pipe(gulp.dest('dist/'));
+  var sources = gulp.src(['src/scripts/*.js']);
+  processScripts(sources, name);
 });
 
-gulp.task('build', ['css', 'js']);
+gulp.task('js-with-tpls', function(){
+  var sources = gulp.src(['src/scripts/*.js', 'src/templates/*.html'])
+    .pipe($.if('*.html', $.minifyHtml(minifyHtmlOptions)))
+    .pipe($.if('*.html', $.angularTemplatecache(name + '.tpl.js', templateOptions)))
+  processScripts(sources, name + '-tpls');
+});
+
+gulp.task('build', ['styles', 'js', 'js-with-tpls']);
 
 /** build docs **/
 
@@ -182,7 +196,16 @@ gulp.task('sample', ['widget-templates', 'sample-templates', 'dashboard-template
 
 /** livereload **/
 
-gulp.task('watch', function(){
+gulp.task('reload', function(){
+  gulp.src('sample/*.html')
+      .pipe(connect.reload());
+})
+
+gulp.task('watch-styles', function(){
+  gulp.watch('src/styles/*.scss', ['styles', 'reload']);
+})
+
+gulp.task('watch', ['watch-styles'], function(){
   var paths = [
     'src/scripts/*.js',
     'src/styles/*.css',
@@ -197,10 +220,7 @@ gulp.task('watch', function(){
     'sample/widgets/*/src/*.css',
     'sample/widgets/*/src/*.html'
   ];
-  gulp.watch(paths).on('change', function(file){
-    gulp.src(file.path)
-        .pipe(connect.reload());
-  });
+  gulp.watch(paths, ['reload']);
 });
 
 gulp.task('webserver', ['install-widgets'], function(){
@@ -218,7 +238,32 @@ gulp.task('webserver', ['install-widgets'], function(){
   });
 });
 
-gulp.task('serve', ['webserver', 'watch']);
+gulp.task('serve', ['webserver', 'styles', 'watch']);
+
+/** unit tests */
+
+gulp.task('test', ['dashboard-templates', 'karma']);
+
+/** run karma */
+function runKarma(done, singleRun){
+  new karmaServer({
+      configFile : __dirname +'/test/karma.conf.js',
+      singleRun: singleRun
+  }, done).start();
+}
+
+gulp.task('karma', ['dashboard-templates'], function(done) {
+  runKarma(done, true);
+});
+
+gulp.task('karma-debug', ['dashboard-templates'], function(done) {
+  runKarma(done, false);
+});
+
+gulp.task('coverall', ['test'], function() {
+    return gulp.src('dist/reports/coverage/html/lcov.info')
+               .pipe($.coveralls());
+});
 
 /** e2e **/
 
@@ -248,7 +293,7 @@ gulp.task('e2e-server', ['install-widgets'], function(){
 
 // Setting up the test task
 gulp.task('e2e', ['e2e-server', 'webdriver_update'], function(cb) {
-  gulp.src('e2e/*Spec.js')
+  gulp.src('test/e2e/*Spec.js')
       .pipe(protractor(protractorOptions))
       .on('error', function(e) {
         // stop webserver
@@ -263,7 +308,11 @@ gulp.task('e2e', ['e2e-server', 'webdriver_update'], function(cb) {
       });
 });
 
+/** travis ci **/
+
+gulp.task('travis', ['jslint', 'test', 'coverall', 'build']);
+
 /** shorthand methods **/
 gulp.task('all', ['build', 'docs', 'sample']);
 
-gulp.task('default', ['build']);
+gulp.task('default', ['jslint', 'test', 'build']);

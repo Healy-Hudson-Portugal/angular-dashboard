@@ -38,13 +38,18 @@
  * @param {boolean=} editable false to disable the editmode of the dashboard.
  * @param {boolean=} collapsible true to make widgets collapsible on the dashboard.
  * @param {boolean=} maximizable true to add a button for open widgets in a large modal panel.
+ * @param {boolean=} enableConfirmDelete true to ask before remove an widget from the dashboard.
  * @param {string=} structure the default structure of the dashboard.
  * @param {object=} adfModel model object of the dashboard.
  * @param {function=} adfWidgetFilter function to filter widgets on the add dialog.
+ * @param {boolean=} continuousEditMode enable continuous edit mode, to fire add/change/remove
+ *                   events during edit mode not reset it if edit mode is exited.
+ * @param {boolean=} categories enable categories for the add widget dialog.
  */
 
 angular.module('adf')
-  .directive('adfDashboard', function($rootScope, $log, $modal, dashboard, adfTemplatePath) {
+  .directive('adfDashboard', function ($rootScope, $log, $timeout, $uibModal, dashboard, adfTemplatePath) {
+
     'use strict';
 
     function stringToBoolean(string) {
@@ -94,7 +99,7 @@ angular.module('adf')
             // if a column exist at the counter index, copy over the column
             if (angular.isDefined(columns[counter])) {
               // do not add widgets to a column, which uses nested rows
-              if (!angular.isDefined(column.rows)) {
+              if (angular.isUndefined(column.rows)){
                 copyWidgets(columns[counter], column);
                 counter++;
               }
@@ -183,21 +188,94 @@ angular.module('adf')
      *
      * @param dashboard model
      * @param widget to add to model
+     * @param name name of the dashboard
      */
-    function addNewWidgetToModel(model, widget) {
-      if (model) {
+
+    function addNewWidgetToModel(model, widget, name){
+      if (model){
         var column = findFirstWidgetColumn(model);
         if (column) {
           if (!column.widgets) {
             column.widgets = [];
           }
           column.widgets.unshift(widget);
+
+          // broadcast added event
+          $rootScope.$broadcast('adfWidgetAdded', name, model, widget);
         } else {
           $log.error('could not find first widget column');
         }
       } else {
         $log.error('model is undefined');
       }
+    }
+
+    /**
+     * Checks if the edit mode of the widget should be opened immediately.
+     *
+     * @param widget type
+     */
+    function isEditModeImmediate(type){
+      var widget = dashboard.widgets[type];
+      return widget && widget.edit && widget.edit.immediate;
+    }
+
+    /**
+     * Opens the edit mode of the specified widget.
+     *
+     * @param dashboard scope
+     * @param widget
+     */
+    function openEditMode($scope, widget){
+      // wait some time before fire enter edit mode event
+      $timeout(function(){
+        $scope.$broadcast('adfWidgetEnterEditMode', widget);
+      }, 200);
+    }
+
+    /**
+     * Splits an object into an array multiple objects inside.
+     *
+     * @param object source object
+     * @param size size of array
+     *
+     * @return array of splitted objects
+     */
+    function split(object, size) {
+      var arr = [];
+      var i = 0;
+      angular.forEach(object, function(value, key){
+        var index = i++ % size;
+        if (!arr[index]){
+          arr[index] = {};
+        }
+        arr[index][key] = value;
+      });
+      return arr;
+    }
+
+    /**
+     * Creates object with the category name as key and an array of widgets as value.
+     *
+     * @param widgets array of widgets
+     *
+     * @return array of categories
+     */
+    function createCategories(widgets){
+      var categories = {};
+      angular.forEach(widgets, function(widget, key){
+        var category = widget.category;
+        // if the widget has no category use a default one
+        if (!category){
+          category = 'Miscellaneous';
+        }
+        // push widget to category array
+        if (angular.isUndefined(categories[category])){
+          categories[category] = {widgets: {}};
+        }
+        categories[category].widgets[key] = widget;
+      });
+      return categories;
     }
 
     return {
@@ -209,10 +287,13 @@ angular.module('adf')
         name: '@',
         collapsible: '@',
         editable: '@',
+        editMode: '@',
+        continuousEditMode: '=',
         maximizable: '@',
         adfModel: '=',
         adfWidgetFilter: '=',
-        toggleDashboardEditMode: '='
+        toggleDashboardEditMode: '=', // mrg:2016-09-14
+        categories: '@'
       },
       controller: function($scope) {
         var model = {};
@@ -246,6 +327,9 @@ angular.module('adf')
               if (!model.title) {
                 model.title = 'Dashboard';
               }
+              if (!model.titleTemplateUrl) {
+                model.titleTemplateUrl = adfTemplatePath + 'dashboard-title.html';
+              }
               $scope.model = model;
             } else {
               $log.error('could not find or create model');
@@ -264,50 +348,108 @@ angular.module('adf')
         $scope.editMode = false;
         $scope.editClass = '';
 
+
         // use to build an unique id for each dashboard
         $scope.timestamp = Date.now();
 
+        //passs translate function from dashboard so we can translate labels inside html templates
+        $scope.translate = dashboard.translate;
+
+        function getNewModalScope() {
+          var scope = $scope.$new();
+          //pass translate function to the new scope so we can translate the labels inside the modal dialog
+          scope.translate = dashboard.translate;
+          return scope;
+        }
+
         $scope.toggleEditMode = function() {
-			$scope.editMode = !$scope.editMode;
-			$scope.toggleDashboardEditMode = $scope.editMode;
+          $scope.editMode = !$scope.editMode;
+          $scope.toggleDashboardEditMode = $scope.editMode;
 
-			if ($scope.editMode) {
-				$scope.modelCopy = angular.copy($scope.adfModel, {});
-			}
-
-			if (!$scope.editMode) {
-				//$rootScope.$broadcast('adfDashboardChanged', name, model);
-			}
+          if ($scope.editMode) {
+            $scope.modelCopy = angular.copy($scope.adfModel, {});
+            if (!$scope.continuousEditMode) {
+              $scope.modelCopy = angular.copy($scope.adfModel, {});
+              $rootScope.$broadcast('adfIsEditMode');
+            }
+          }
         };
 
 		$scope.saveChanges = function () {
             $scope.toggleDashboardEditMode = false;
             $rootScope.$broadcast('adfDashboardSaveChanges', name, model);
         };
-		
+
+        $scope.$on('adfToggleEditMode', function() {
+            $scope.toggleEditMode();
+        });
+
+        $scope.collapseAll = function(collapseExpandStatus){
+          $rootScope.$broadcast('adfDashboardCollapseExpand',{collapseExpandStatus : collapseExpandStatus});
+        };
+
+        // mrg:2016-09-14
+        $scope.cancelEditMode = function(){
+          $scope.toggleDashboardEditMode = false;
+          $scope.editMode = false;
+          if (!$scope.continuousEditMode) {
+            $scope.modelCopy = angular.copy($scope.modelCopy, $scope.adfModel);
+          }
+          $rootScope.$broadcast('adfDashboardCancelChanges', name, model);
+          $rootScope.$broadcast('adfDashboardEditsCancelled');
+        };
+
+        /*
+        // mrg:2016-09-14 - nuno
         $scope.cancelEditMode = function() {
             $scope.toggleDashboardEditMode = false;
             $scope.modelCopy = angular.copy($scope.modelCopy, $scope.adfModel);
             $rootScope.$broadcast('adfDashboardCancelChanges', name, model);
         };
 
+        // mrg:2016-09-14 - upstream
+        $scope.cancelEditMode = function(){
+          $scope.editMode = false;
+          if (!$scope.continuousEditMode) {
+            $scope.modelCopy = angular.copy($scope.modelCopy, $scope.adfModel);
+          }
+          $rootScope.$broadcast('adfDashboardEditsCancelled');
+        };
+        */
+
         // edit dashboard settings
-        $scope.editDashboardDialog = function() {
-          var editDashboardScope = $scope.$new();
+        $scope.editDashboardDialog = function(){
+          var editDashboardScope = getNewModalScope();
+
           // create a copy of the title, to avoid changing the title to
           // "dashboard" if the field is empty
           editDashboardScope.copy = {
             title: model.title
           };
+
+          // pass dashboard structure to scope
           editDashboardScope.structures = dashboard.structures;
-          var instance = $modal.open({
+
+          // pass split function to scope, to be able to display structures in multiple columns
+          editDashboardScope.split = split;
+
+          var adfEditTemplatePath = adfTemplatePath + 'dashboard-edit.html';
+          if(model.editTemplateUrl) {
+            adfEditTemplatePath = model.editTemplateUrl;
+          }
+          var instance = $uibModal.open({
             scope: editDashboardScope,
-            templateUrl: adfTemplatePath + 'dashboard-edit.html',
-            backdrop: 'static'
+            templateUrl: adfEditTemplatePath,
+            backdrop: 'static',
+            size: 'lg'
           });
-          $scope.changeStructure = function(name, structure) {
+
+          editDashboardScope.changeStructure = function(name, structure){
             $log.info('change structure to ' + name);
             changeStructure(model, structure);
+            if (model.structure !== name){
+              model.structure = name;
+            }
           };
           editDashboardScope.closeDialog = function() {
             // copy the new title back to the model
@@ -319,8 +461,9 @@ angular.module('adf')
         };
 
         // add widget dialog
-        $scope.addWidgetDialog = function() {
-          var addScope = $scope.$new();
+
+        $scope.addWidgetDialog = function(){
+          var addScope = getNewModalScope();
           var model = $scope.model;
           var widgets;
           if (angular.isFunction(widgetFilter)) {
@@ -334,21 +477,42 @@ angular.module('adf')
             widgets = dashboard.widgets;
           }
           addScope.widgets = widgets;
+
+          //pass translate function to the new scope so we can translate the labels inside the modal dialog
+          addScope.translate = $scope.translate;
+
+          // pass createCategories function to scope, if categories option is enabled
+          if ($scope.options.categories){
+            $scope.createCategories = createCategories;
+          }
+
+          var adfAddTemplatePath = adfTemplatePath + 'widget-add.html';
+          if(model.addTemplateUrl) {
+            adfAddTemplatePath = model.addTemplateUrl;
+          }
+
           var opts = {
             scope: addScope,
-            templateUrl: adfTemplatePath + 'widget-add.html',
+            templateUrl: adfAddTemplatePath,
             backdrop: 'static'
           };
-          var instance = $modal.open(opts);
-          addScope.addWidget = function(widget) {
+
+          var instance = $uibModal.open(opts);
+          addScope.addWidget = function(widget){
+
             var w = {
               type: widget,
               config: createConfiguration(widget)
             };
-            addNewWidgetToModel(model, w);
+            addNewWidgetToModel(model, w, name);
             // close and destroy
             instance.close();
             addScope.$destroy();
+
+            // check for open edit mode immediately
+            if (isEditModeImmediate(widget)){
+              openEditMode($scope, w);
+            }
           };
           addScope.closeDialog = function() {
             // close and destroy
@@ -356,14 +520,18 @@ angular.module('adf')
             addScope.$destroy();
           };
         };
+
+        $scope.addNewWidgetToModel = addNewWidgetToModel;
       },
       link: function($scope, $element, $attr) {
         // pass options to scope
         var options = {
           name: $attr.name,
           editable: true,
+          enableConfirmDelete: stringToBoolean($attr.enableConfirmDelete),
           maximizable: stringToBoolean($attr.maximizable),
-          collapsible: stringToBoolean($attr.collapsible)
+          collapsible: stringToBoolean($attr.collapsible),
+          categories: stringToBoolean($attr.categories)
         };
         if (angular.isDefined($attr.editable)) {
           options.editable = stringToBoolean($attr.editable);

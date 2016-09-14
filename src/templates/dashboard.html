@@ -1,4 +1,6 @@
+
 <div id="dashboard{{timestamp}}" class="dashboard-container">
+  <div ng-include src="model.titleTemplateUrl"></div>
   <div>
     <h1 ng-show="editMode">
       {{model.title}}
@@ -25,6 +27,7 @@
                        options="options"
                        ng-repeat="row in model.rows"
                        edit-mode="editMode"
+                       continuous-edit-mode="continuousEditMode"
     />
   </div>
 
