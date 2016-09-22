@@ -1,34 +1,15 @@
 
 <div id="dashboard{{timestamp}}" class="dashboard-container">
   <div ng-include src="model.titleTemplateUrl"></div>
-  <div>
-    <h1 ng-show="editMode">
-      {{model.title}}
-      <span style="font-size: 20px;" class="pull-right">
-        <a href="" ng-if="editMode" title="add new widget" ng-click="addWidgetDialog()">
-          <i class="glyphicon glyphicon-plus-sign"></i>
-        </a>
-        <a href="" ng-if="editMode" title="edit dashboard" ng-click="editDashboardDialog()">
-          <i class="glyphicon glyphicon-cog"></i>
-        </a>
-        <a href="" ng-if="editMode" title="save changes" ng-click="saveChanges()">
-          <i class="glyphicon glyphicon-floppy-save"></i>
-        </a>
-        <a href="" ng-if="editMode" title="undo changes" ng-click="cancelEditMode()">
-          <i class="glyphicon glyphicon-remove-circle adf-flip"></i>
-        </a>
-      </span>
-    </h1>
-  </div>
-    asda
-  <div class="dashboard" x-ng-class="{'edit' : editMode}">
-    <adf-dashboard-row row="row"
-                       adf-model="model"
-                       options="options"
-                       ng-repeat="row in model.rows"
-                       edit-mode="editMode"
-                       continuous-edit-mode="continuousEditMode"
-    />
-  </div>
+  
+      <div class="dashboard" x-ng-class="{'edit' : editMode}">
+        <adf-dashboard-row row="row"
+                           adf-model="model"
+                           options="options"
+                           ng-repeat="row in model.rows"
+                           edit-mode="editMode"
+                           continuous-edit-mode="continuousEditMode"
+            />            
+    </div>
 
 </div>

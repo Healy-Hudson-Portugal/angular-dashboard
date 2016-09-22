@@ -364,7 +364,7 @@ angular.module('adf')
 
         $scope.toggleEditMode = function() {
           $scope.editMode = !$scope.editMode;
-          $scope.toggleDashboardEditMode = $scope.editMode;
+          //$scope.toggleDashboardEditMode = $scope.editMode;
 
           if ($scope.editMode) {
             $scope.modelCopy = angular.copy($scope.adfModel, {});
@@ -376,7 +376,7 @@ angular.module('adf')
         };
 
 		$scope.saveChanges = function () {
-            $scope.toggleDashboardEditMode = false;
+            //$scope.toggleDashboardEditMode = false;
             $rootScope.$broadcast('adfDashboardSaveChanges', name, model);
         };
 
@@ -390,7 +390,7 @@ angular.module('adf')
 
         // mrg:2016-09-14
         $scope.cancelEditMode = function(){
-          $scope.toggleDashboardEditMode = false;
+          //$scope.toggleDashboardEditMode = false;
           $scope.editMode = false;
           if (!$scope.continuousEditMode) {
             $scope.modelCopy = angular.copy($scope.modelCopy, $scope.adfModel);
