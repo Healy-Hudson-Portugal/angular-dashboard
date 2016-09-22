@@ -1,17 +1,11 @@
 <h1>
   {{model.title}}
-  <span style="font-size: 16px" class="pull-right">
-    <a href="" ng-if="editMode" title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_ADD') }}" ng-click="addWidgetDialog()">
-      <i class="glyphicon glyphicon-plus-sign"></i>
-    </a>
-    <a href="" ng-if="editMode" title="{{ translate('ADF_COMMON_EDIT_DASHBOARD') }}" ng-click="editDashboardDialog()">
-      <i class="glyphicon glyphicon-cog"></i>
-    </a>
-    <a href="" ng-if="options.editable" title="{{editMode ? translate('ADF_DASHBOARD_TITLE_TOOLTIP_SAVE') : translate('ADF_DASHBOARD_TITLE_TOOLTIP_EDIT_MODE') }}" ng-click="toggleEditMode()">
-      <i class="glyphicon" x-ng-class="{'glyphicon-edit' : !editMode, 'glyphicon-save' : editMode}"></i>
-    </a>
-    <a href="" ng-if="editMode" title="{{ translate('ADF_DASHBOARD_TITLE_TOOLTIP_UNDO') }}" ng-click="cancelEditMode()">
-      <i class="glyphicon glyphicon-repeat adf-flip"></i>
-    </a>
-  </span>
+    <span style="font-size: 16px" class="pull-right">
+        <md-button ng-if="options.editable" class="md-fab md-mini md-primary" ng-click="toggleEditMode()" aria-label="Favorite">
+            <md-icon md-svg-icon="{{editMode ? '../src/images/ic_save_black_18px.svg' : '../src/images/ic_mode_edit_black_24px.svg' }}"></md-icon>
+        </md-button>
+        <md-button ng-if="editMode" class="md-fab md-mini md-primary" ng-click="cancelEditMode()" aria-label="undo">
+            <md-icon md-svg-icon="../src/images/ic_undo_black_18px.svg"></md-icon>
+        </md-button>
+    </span>
 </h1>

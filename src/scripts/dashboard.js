@@ -48,7 +48,7 @@
  */
 
 angular.module('adf')
-  .directive('adfDashboard', function ($rootScope, $log, $timeout, $uibModal, dashboard, adfTemplatePath) {
+  .directive('adfDashboard', function ($rootScope, $log, $timeout, dashboard, adfTemplatePath) {
 
     'use strict';
 
@@ -437,12 +437,12 @@ angular.module('adf')
           if(model.editTemplateUrl) {
             adfEditTemplatePath = model.editTemplateUrl;
           }
-          var instance = $uibModal.open({
-            scope: editDashboardScope,
-            templateUrl: adfEditTemplatePath,
-            backdrop: 'static',
-            size: 'lg'
-          });
+          //var instance = $uibModal.open({
+          //  scope: editDashboardScope,
+          //  templateUrl: adfEditTemplatePath,
+          //  backdrop: 'static',
+          //  size: 'lg'
+          //});
 
           editDashboardScope.changeStructure = function(name, structure){
             $log.info('change structure to ' + name);
@@ -455,7 +455,7 @@ angular.module('adf')
             // copy the new title back to the model
             model.title = editDashboardScope.copy.title;
             // close modal and destroy the scope
-            instance.close();
+            //instance.close();
             editDashboardScope.$destroy();
           };
         };
@@ -497,7 +497,7 @@ angular.module('adf')
             backdrop: 'static'
           };
 
-          var instance = $uibModal.open(opts);
+          //var instance = $uibModal.open(opts);
           addScope.addWidget = function(widget){
 
             var w = {
@@ -506,7 +506,7 @@ angular.module('adf')
             };
             addNewWidgetToModel(model, w, name);
             // close and destroy
-            instance.close();
+            //instance.close();
             addScope.$destroy();
 
             // check for open edit mode immediately
@@ -516,7 +516,7 @@ angular.module('adf')
           };
           addScope.closeDialog = function() {
             // close and destroy
-            instance.close();
+            //instance.close();
             addScope.$destroy();
           };
         };

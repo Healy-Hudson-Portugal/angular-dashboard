@@ -24,6 +24,7 @@
 'use strict';
 
 angular.module('sample', [
+  'ngMaterial','ngMessages',
   'adf', 'adf.structures.base', 'adf.widget.news',
   'adf.widget.randommsg', 'adf.widget.weather',
   'adf.widget.markdown', 'adf.widget.linklist',
