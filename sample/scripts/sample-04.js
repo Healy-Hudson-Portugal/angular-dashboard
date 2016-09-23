@@ -127,8 +127,16 @@ angular.module('sample-04', ['adf', 'LocalStorageModule'])
   $scope.collapsible = false;
   $scope.maximizable = false;
   $scope.categories = false;
+  $scope.editable = true;
 
   $scope.$on('adfDashboardChanged', function(event, name, model) {
     localStorageService.set(name, model);
   });
+
+  var eventFired = function (event, name, model) {
+     
+  };
+
+  $scope.$on('adfToggleEditMode', eventFired);
+
 });

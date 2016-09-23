@@ -1,4 +1,4 @@
-<h1>
+<h1 ng-if="editMode || editable"> 
   {{model.title}}
     <span style="font-size: 16px" class="pull-right">
         <md-button ng-if="editMode" class="md-fab md-mini md-primary" ng-click="addWidgetDialog()" aria-label="Add">
