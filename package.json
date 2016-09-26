@@ -3,8 +3,12 @@
   "version": "0.13.0-SNAPSHOT",
   "license": "MIT",
   "authors": "Sebastian Sdorra",
+  "dependencies": {
+	"angular": ">=1.4",
+	"sortablejs": "^1.4.2"
+  },
   "devDependencies": {
-    "connect-modrewrite": "^0.8.2",
+	"connect-modrewrite": "^0.8.2",
     "del": "^2.0.2",
     "eslint": "^2.9.0",
     "eslint-config-angular": "^0.5.0",
