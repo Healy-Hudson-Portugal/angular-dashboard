@@ -319,7 +319,7 @@ angular.module('adf')
                               model.title = 'Dashboard';
                           }
                           if (!model.titleTemplateUrl) {
-                              model.titleTemplateUrl = adfTemplatePath + 'dashboard-title.html';
+                              model.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
                           }
                           $scope.model = model;
                       } else {
@@ -393,7 +393,7 @@ angular.module('adf')
                   // pass split function to scope, to be able to display structures in multiple columns
                   editDashboardScope.split = split;
 
-                  var adfEditTemplatePath = adfTemplatePath + 'dashboard-edit.html';
+                  var adfEditTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + + 'dashboard-edit.html';
                   if (model.editTemplateUrl) {
                       adfEditTemplatePath = model.editTemplateUrl;
                   }
@@ -444,7 +444,7 @@ angular.module('adf')
                       $scope.createCategories = createCategories;
                   }
 
-                  var adfAddTemplatePath = adfTemplatePath + 'widget-add.html';
+                  var adfAddTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + + 'widget-add.html';
                   if (model.addTemplateUrl) {
                       adfAddTemplatePath = model.addTemplateUrl;
                   }
@@ -495,6 +495,6 @@ angular.module('adf')
               }
               $scope.options = options;
           },
-          templateUrl: adfTemplatePath + 'dashboard.html'
+          templateUrl:(!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard.html'
       };
   });

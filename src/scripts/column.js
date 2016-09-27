@@ -170,7 +170,7 @@ angular.module('adf')
         adfModel: '=',
         options: '='
       },
-      templateUrl: adfTemplatePath + 'dashboard-column.html',
+      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-column.html',
       link: function ($scope, $element) {
         // set id
         var col = $scope.column;
