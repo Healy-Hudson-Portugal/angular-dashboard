@@ -393,7 +393,7 @@ angular.module('adf')
                   // pass split function to scope, to be able to display structures in multiple columns
                   editDashboardScope.split = split;
 
-                  var adfEditTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + + 'dashboard-edit.html';
+                  var adfEditTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-edit.html';
                   if (model.editTemplateUrl) {
                       adfEditTemplatePath = model.editTemplateUrl;
                   }
@@ -443,7 +443,7 @@ angular.module('adf')
                       $scope.createCategories = createCategories;
                   }
 
-                  var adfAddTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + + 'widget-add.html';
+                  var adfAddTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-add.html';
                   if (model.addTemplateUrl) {
                       adfAddTemplatePath = model.addTemplateUrl;
                   }

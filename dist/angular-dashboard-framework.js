@@ -230,7 +230,7 @@ angular.module('adf')
         adfModel: '=',
         options: '='
       },
-      templateUrl: adfTemplatePath + 'dashboard-column.html',
+      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-column.html',
       link: function ($scope, $element) {
         // set id
         var col = $scope.column;
@@ -301,7 +301,7 @@ angular.module('adf')
  */
 
 angular.module('adf')
-  .directive('adfDashboard', ["$rootScope", "$log", "$timeout", "dashboard", "adfTemplatePath", function ($rootScope, $log, $timeout, dashboard, adfTemplatePath) {
+  .directive('adfDashboard', ["$rootScope", "$log", "$timeout", "dashboard", "adfTemplatePath", "$mdDialog", function ($rootScope, $log, $timeout, dashboard, adfTemplatePath, $mdDialog) {
 
       
 
@@ -572,7 +572,7 @@ angular.module('adf')
                               model.title = 'Dashboard';
                           }
                           if (!model.titleTemplateUrl) {
-                              model.titleTemplateUrl = adfTemplatePath + 'dashboard-title.html';
+                              model.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
                           }
                           $scope.model = model;
                       } else {
@@ -646,16 +646,16 @@ angular.module('adf')
                   // pass split function to scope, to be able to display structures in multiple columns
                   editDashboardScope.split = split;
 
-                  var adfEditTemplatePath = adfTemplatePath + 'dashboard-edit.html';
+                  var adfEditTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-edit.html';
                   if (model.editTemplateUrl) {
                       adfEditTemplatePath = model.editTemplateUrl;
                   }
-                  //var instance = $uibModal.open({
-                  //  scope: editDashboardScope,
-                  //  templateUrl: adfEditTemplatePath,
-                  //  backdrop: 'static',
-                  //  size: 'lg'
-                  //});
+                  var instance = $mdDialog.show({
+                    scope: editDashboardScope,
+                    templateUrl: adfEditTemplatePath,
+                    backdrop: 'static',
+                    size: 'lg'
+                  });
                   editDashboardScope.changeStructure = function (name, structure) {
                       $log.info('change structure to ' + name);
                       changeStructure(model, structure);
@@ -667,7 +667,6 @@ angular.module('adf')
                       // copy the new title back to the model
                       model.title = editDashboardScope.copy.title;
                       // close modal and destroy the scope
-                      //instance.close();
                       editDashboardScope.$destroy();
                   };
               };
@@ -697,7 +696,7 @@ angular.module('adf')
                       $scope.createCategories = createCategories;
                   }
 
-                  var adfAddTemplatePath = adfTemplatePath + 'widget-add.html';
+                  var adfAddTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-add.html';
                   if (model.addTemplateUrl) {
                       adfAddTemplatePath = model.addTemplateUrl;
                   }
@@ -708,7 +707,8 @@ angular.module('adf')
                       backdrop: 'static'
                   };
 
-                  //var instance = $uibModal.open(opts);
+                  $mdDialog.show(opts);
+                   
                   addScope.addWidget = function (widget) {
                       var w = {
                           type: widget,
@@ -716,7 +716,6 @@ angular.module('adf')
                       };
                       addNewWidgetToModel(model, w, name);
                       // close and destroy
-                      //instance.close();
                       addScope.$destroy();
 
                       // check for open edit mode immediately
@@ -726,7 +725,6 @@ angular.module('adf')
                   };
                   addScope.closeDialog = function () {
                       // close and destroy
-                      //instance.close();
                       addScope.$destroy();
                   };
               };
@@ -748,7 +746,7 @@ angular.module('adf')
               }
               $scope.options = options;
           },
-          templateUrl: adfTemplatePath + 'dashboard.html'
+          templateUrl:(!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard.html'
       };
   }]);
 /*
@@ -924,6 +922,7 @@ angular.module('adf.provider', ['adf.locale'])
         </div>\n\
       </div>';
     var customWidgetTemplatePath = null;
+    var customDashboardTemplatePath = null;
 
     // default apply function of widget.edit.apply
     var defaultApplyFunction = function(){
@@ -1043,6 +1042,11 @@ angular.module('adf.provider', ['adf.locale'])
     this.widgetsPath = function(path){
       widgetsPath = path;
       return this;
+    };
+
+    this.customDashboardTemplatePath = function (path) {
+        customDashboardTemplatePath = path;
+        return this;
     };
 
    /**
@@ -1202,6 +1206,7 @@ angular.module('adf.provider', ['adf.locale'])
         activeLocale: getActiveLocale,
         translate: translate,
         customWidgetTemplatePath: customWidgetTemplatePath,
+        customDashboardTemplatePath: customDashboardTemplatePath,
 
         /**
          * @ngdoc method
@@ -1263,7 +1268,7 @@ angular.module('adf.provider', ['adf.locale'])
 
 /* global angular */
 angular.module('adf')
-  .directive('adfDashboardRow', ["$compile", "adfTemplatePath", "columnTemplate", function ($compile, adfTemplatePath, columnTemplate) {
+  .directive('adfDashboardRow', ["$compile", "adfTemplatePath", "columnTemplate", "dashboard", function ($compile, adfTemplatePath, columnTemplate, dashboard) {
     
 
     return {
@@ -1276,7 +1281,7 @@ angular.module('adf')
         continuousEditMode: '=',
         options: '='
       },
-      templateUrl: adfTemplatePath + 'dashboard-row.html',
+      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-row.html',
       link: function($scope, $element) {
         if (angular.isDefined($scope.row.columns) && angular.isArray($scope.row.columns)) {
           $compile(columnTemplate)($scope, function(cloned) {
