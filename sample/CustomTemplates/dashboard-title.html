@@ -1,0 +1,17 @@
+<h1 ng-if="editMode || editable"> 
+  {{model.title}}
+    <span style="font-size: 16px" class="pull-right">
+        <md-button ng-if="editMode" class="md-fab md-mini md-primary" ng-click="addWidgetDialog()" aria-label="Add">
+            A
+        </md-button>
+         <md-button ng-if="editMode" class="md-fab md-mini md-primary" ng-click="editDashboardDialog()" aria-label="Settings">
+            ST
+        </md-button>
+        <md-button ng-if="options.editable" class="md-fab md-mini md-primary" ng-click="toggleEditMode()" aria-label="SaveOrEdit">
+            {{editMode ? 'SA' : 'E' }}
+        </md-button>
+        <md-button ng-if="editMode" class="md-fab md-mini md-primary" ng-click="cancelEditMode()" aria-label="Undo">
+            U
+        </md-button>
+    </span>
+</h1>

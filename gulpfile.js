@@ -36,6 +36,10 @@ var karmaServer = require('karma').Server;
 var name = pkg.name;
 var browserify = require('browserify');
 var tap = require('gulp-tap');
+var uglify = require('gulp-uglify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+
 
 var templateOptions = {
   root: '../src/templates',
@@ -143,9 +147,22 @@ gulp.task('js-with-tpls', function() {
   processScripts(sources, name + '-tpls');
 });
 
-gulp.task('build', ['styles', 'js', 'js-with-tpls']);
+gulp.task('build', ['styles', 'jsdepend' ]);
 
 gulp.task('jsdepend', _js.bind(this, 'angular-dashboard-framework.js'));
+
+gulp.task('browserify', function () {
+    return browserify('./app/angular-dashboard-framework.js')
+      .bundle()
+      .pipe(source(name+'.js'))
+      .pipe($.if('*.js', $.replace('<<adfVersion>>', pkg.version)))
+      .pipe(gulp.dest(npmPackageConfig.versioned))
+      .pipe($.rename(name + '.min.js'))
+      //.pipe(source('bundle.js')) // gives streaming vinyl file object
+      .pipe(buffer()) // <----- convert from streaming to buffered vinyl file object
+      .pipe(uglify()) // now gulp-uglify works 
+      .pipe(gulp.dest(npmPackageConfig.versioned));
+});
 
 /** build docs **/
 

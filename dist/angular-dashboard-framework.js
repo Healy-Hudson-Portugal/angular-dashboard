@@ -4,8 +4,6 @@
 
 'use strict';
 
-var Sortable = require('sortablejs');
-
 require('../src/scripts/adf.js');
 require('../src/scripts/adf.locale.js');
 require('../src/scripts/column.js');
@@ -21,7 +19,7 @@ require('../src/scripts/widget.js');
 
 // eva-lib.js:end
 
-},{"../src/scripts/adf.js":3,"../src/scripts/adf.locale.js":4,"../src/scripts/column.js":5,"../src/scripts/dashboard.js":6,"../src/scripts/locale-constant.js":7,"../src/scripts/order-by-object-key.js":8,"../src/scripts/provider.js":9,"../src/scripts/row.js":10,"../src/scripts/structure-preview.js":11,"../src/scripts/widget-content.js":12,"../src/scripts/widget-service.js":13,"../src/scripts/widget.js":14,"sortablejs":2}],2:[function(require,module,exports){
+},{"../src/scripts/adf.js":3,"../src/scripts/adf.locale.js":4,"../src/scripts/column.js":5,"../src/scripts/dashboard.js":6,"../src/scripts/locale-constant.js":7,"../src/scripts/order-by-object-key.js":8,"../src/scripts/provider.js":9,"../src/scripts/row.js":10,"../src/scripts/structure-preview.js":11,"../src/scripts/widget-content.js":12,"../src/scripts/widget-service.js":13,"../src/scripts/widget.js":14}],2:[function(require,module,exports){
 /**!
  * Sortable
  * @author	RubaXa   <trash@rubaxa.org>
@@ -1356,8 +1354,9 @@ angular.module('adf.locale', [])
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
-*/
-
+*/ 
+ 
+var Sortable = require('sortablejs');
 
 /* global angular */
 angular.module('adf')
@@ -1527,7 +1526,7 @@ angular.module('adf')
     };
   });
 
-},{}],6:[function(require,module,exports){
+},{"sortablejs":2}],6:[function(require,module,exports){
 /*
  * The MIT License
  *
@@ -2907,14 +2906,14 @@ angular.module('adf')
           }
 
           if (!definition.titleTemplateUrl) {
-            definition.titleTemplateUrl = adfTemplatePath + 'widget-title.html';
+              definition.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-title.html';
             if (w.titleTemplateUrl) {
               definition.titleTemplateUrl = w.titleTemplateUrl;
             }
           }
 
           if (!definition.editTemplateUrl) {
-            definition.editTemplateUrl = adfTemplatePath + 'widget-edit.html';
+              definition.editTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
             if (w.editTemplateUrl) {
               definition.editTemplateUrl = w.editTemplateUrl;
             }
@@ -2985,7 +2984,7 @@ angular.module('adf')
             var deleteScope = $scope.$new();
             deleteScope.translate = dashboard.translate;
 
-            var deleteTemplateUrl = adfTemplatePath + 'widget-delete.html';
+            var deleteTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-delete.html';
             if (definition.deleteTemplateUrl) {
               deleteTemplateUrl = definition.deleteTemplateUrl;
             }
@@ -3020,7 +3019,7 @@ angular.module('adf')
           editScope.translate = dashboard.translate;
           editScope.definition = angular.copy(definition);
 
-          var adfEditTemplatePath = adfTemplatePath + 'widget-edit.html';
+          var adfEditTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
           if (definition.editTemplateUrl) {
             adfEditTemplatePath = definition.editTemplateUrl;
           }
@@ -3110,7 +3109,7 @@ angular.module('adf')
       replace: true,
       restrict: 'EA',
       transclude: false,
-      templateUrl: dashboard.customWidgetTemplatePath ? dashboard.customWidgetTemplatePath : adfTemplatePath + 'widget.html',
+      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget.html',
       scope: {
         definition: '=',
         col: '=column',
@@ -3145,7 +3144,7 @@ angular.module('adf')
           var fullScreenScope = $scope.$new();
           var opts = {
             scope: fullScreenScope,
-            templateUrl: adfTemplatePath + 'widget-fullscreen.html',
+            templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-fullscreen.html',
             size: definition.modalSize || 'lg', // 'sm', 'lg'
             backdrop: 'static',
             windowClass: (definition.fullScreen) ? 'dashboard-modal widget-fullscreen' : 'dashboard-modal'

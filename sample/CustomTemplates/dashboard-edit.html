@@ -1,0 +1,44 @@
+<md-toolbar>
+    <div class="md-toolbar-tools">
+        <h2>
+            <span>Edit Dashboard</span>
+        </h2>
+        <span flex></span>
+        <md-button class="md-fab md-mini md-primary" ng-click="closeDialog()" aria-label="Close">
+            C
+        </md-button>
+    </div>
+</md-toolbar>
+
+<div ng-cloak  layout="column">
+    <div layout="column">
+        <md-input-container class="md-block" flex>
+            <label>Title</label>
+            <input ng-model="copy.title" required="">
+        </md-input-container>
+    </div>
+    <div>
+        <label>Structure</label>
+        <div layout="row" ng-init="splitted = split(structures, 3)">
+            <div ng-repeat="structureColumn in splitted">
+                <div ng-repeat="(key, structure) in structureColumn">
+                    <div layout="row">
+                        <div layout="column">
+                            <label>
+                                <input type="radio" value="{{key}}" ng-model="model.structure" ng-change="changeStructure(key, structure)">
+                            </label>
+                        </div>
+                        <div layout="column" ng-click="changeStructure(key, structure)">
+                            <adf-structure-preview
+                            name="key"
+                            structure="structure"
+                            selected="model.structure == key">
+                            </adf-structure-preview>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

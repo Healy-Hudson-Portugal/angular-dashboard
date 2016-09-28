@@ -3,8 +3,6 @@
 
 'use strict';
 
-var Sortable = require('sortablejs');
-
 require('../src/scripts/adf.js');
 require('../src/scripts/adf.locale.js');
 require('../src/scripts/column.js');

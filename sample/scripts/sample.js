@@ -36,7 +36,7 @@ angular.module('sample', [
 ])
 .config(function (dashboardProvider, $routeProvider, localStorageServiceProvider) {
     dashboardProvider.widgetsPath('widgets/');
-    //dashboardProvider.customDashboardTemplatePath('../sample/CustomTemplates/');
+    dashboardProvider.customDashboardTemplatePath('../sample/CustomTemplates/');
   localStorageServiceProvider.setPrefix('adf');
 
   $routeProvider.when('/sample/01', {

@@ -1,0 +1,42 @@
+<md-toolbar>
+    <div class="md-toolbar-tools">
+        <h2>
+            <span>Add new widget</span>
+        </h2>
+        <span flex></span>
+        <md-button class="md-fab md-mini md-primary" ng-click="closeDialog()" aria-label="Close">
+            C
+        </md-button>
+    </div>
+</md-toolbar>
+
+<div ng-cloak layout="row" layout="column">
+    <div ng-if="createCategories">
+        <div ng-init="categorized = createCategories(widgets)">
+            <div header="{{category.name}}" ng-repeat="category in categorized | adfOrderByObjectKey: 'name'">
+                <md-list flex>
+                    <md-list-item ng-repeat="widget in category.widgets | adfOrderByObjectKey: 'key'">
+                        <div flex style="border: 2px solid; padding: 20px; border-radius: 25px" layout="row" ng-click="addWidget(widget.key)">
+                            <h3 flex>{{widget.title}}</h3>
+                            <p flex>{{widget.description}}</p>
+                        </div>
+                    </md-list-item>
+                </md-list>
+            </div>
+        </div>
+    </div>
+    <!-- dashboard categories disabled -->
+    <div style="display: inline-block;" ng-if="!createCategories">
+        <md-list flex>
+            <md-list-item ng-repeat="widget in widgets | adfOrderByObjectKey: 'key'">
+                <div flex style="border: 2px solid; padding: 20px; border-radius: 25px" layout="row"  ng-click="addWidget(widget.key)">
+                    <h3 flex>{{widget.title}}</h3>
+                    <p flex>{{widget.description}}</p>
+                </div>
+            </md-list-item>
+        </md-list>
+    </div>    
+</div>
+  
+
+
