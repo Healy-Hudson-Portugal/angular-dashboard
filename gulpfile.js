@@ -22,6 +22,9 @@
  * SOFTWARE.
  */
 
+var npmPackageConfig = require('./package.json').config;
+
+npmPackageConfig.versioned = npmPackageConfig.target;
 
 var gulp = require('gulp');
 var connect = require('gulp-connect');
@@ -31,6 +34,8 @@ var del = require('del');
 var pkg = require('./package.json');
 var karmaServer = require('karma').Server;
 var name = pkg.name;
+var browserify = require('browserify');
+var tap = require('gulp-tap');
 
 var templateOptions = {
   root: '../src/templates',
@@ -77,7 +82,7 @@ gulp.task('lint', ['csslint', 'jslint']);
 /** clean **/
 
 gulp.task('clean', function(cb){
-  del(['dist', '.tmp'], cb);
+    del(['dist','distsrc', '.tmp'], cb);
 });
 
 /** build **/
@@ -110,19 +115,37 @@ function processScripts(sources, filename){
     .pipe(gulp.dest('dist/'));
 }
 
+function _js(manifest) {
+    // build a javascript bundle from the given js file
+    // the given path is corrected to the app source root
+    // [https://github.com/gulpjs/gulp/blob/master/docs/recipes/browserify-multiple-destination.md]
+
+    return gulp.src(manifest, { cwd: npmPackageConfig.source }, { read: false })
+        .pipe(tap(function(file) {
+            file.contents = browserify(file.path).bundle();
+        }))
+        .pipe($.if('*.js', $.replace('<<adfVersion>>', pkg.version)))
+        .pipe(gulp.dest(npmPackageConfig.versioned))
+        .pipe($.rename(name + '.min.js'))
+        .pipe($.sourcemaps.write('.'))
+        .pipe(gulp.dest(npmPackageConfig.versioned));
+}
+
 gulp.task('js', function(){
   var sources = gulp.src(['src/scripts/*.js']);
   processScripts(sources, name);
 });
 
-gulp.task('js-with-tpls', function(){
-  var sources = gulp.src(['src/scripts/*.js', 'src/templates/*.html'])
-    .pipe($.if('*.html', $.minifyHtml(minifyHtmlOptions)))
-    .pipe($.if('*.html', $.angularTemplatecache(name + '.tpl.js', templateOptions)))
+gulp.task('js-with-tpls', function() {
+    var sources = gulp.src(['src/scripts/*.js', 'src/templates/*.html'])
+        .pipe($.if('*.html', $.minifyHtml(minifyHtmlOptions)))
+        .pipe($.if('*.html', $.angularTemplatecache(name + '.tpl.js', templateOptions)));
   processScripts(sources, name + '-tpls');
 });
 
 gulp.task('build', ['styles', 'js', 'js-with-tpls']);
+
+gulp.task('jsdepend', _js.bind(this, 'angular-dashboard-framework.js'));
 
 /** build docs **/
 
