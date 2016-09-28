@@ -1,24 +1,31 @@
-<md-toolbar>
-    <div class="md-toolbar-tools">
-        <h2>
-            <span>{{definition.title}}</span>
-        </h2>
-        <span flex></span>
-        <md-button class="md-fab md-mini md-primary" ng-if="widget.reload" ng-click="reload()" aria-label="Favorite">
-            <!--<md-icon md-svg-icon="../src/images/ic_cached_black_24px.svg"></md-icon>-->
-            R
-        </md-button>
-        <md-button class="md-fab md-mini md-primary adf-move" ng-if="editMode" aria-label="editMode">
-            <!--<md-icon md-svg-icon="../src/images/ic_open_with_black_24px.svg"></md-icon>-->
-            M
-        </md-button>
-        <md-button class="md-icon-button" ng-click="edit()" ng-if="editMode" aria-label="edit">
-            <!--<md-icon md-svg-icon="../src/images/ic_settings_black_24px.svg"></md-icon>-->
-            S
-        </md-button>
-         <md-button class="md-fab md-mini md-primary" ng-click="remove()" ng-if="editMode" aria-label="remove">
-             <!--<md-icon md-svg-icon="../src/images/ic_clear_black_24px.svg"></md-icon>-->
-           D
-        </md-button>
-    </div>
-</md-toolbar>
+<h3 class="panel-title">
+{{definition.title}}
+  <span class="pull-right">
+    <a href="" title="{{ translate('ADF_WIDGET_TOOLTIP_REFRESH') }}" ng-if="widget.reload" ng-click="reload()">
+      <i class="glyphicon glyphicon-refresh"></i>
+    </a>
+    <!-- change widget location -->
+    <a href="" title="{{ translate('ADF_WIDGET_TOOLTIP_MOVE') }}" class="adf-move" ng-if="editMode">
+      <i class="glyphicon glyphicon-move"></i>
+    </a>
+    <!-- collapse -->
+    <a href="" title="{{ translate('ADF_WIDGET_TOOLTIP_COLLAPSE') }}" ng-show="options.collapsible && !widgetState.isCollapsed" ng-click="widgetState.isCollapsed = !widgetState.isCollapsed">
+      <i class="glyphicon glyphicon-minus"></i>
+    </a>
+    <!-- expand -->
+    <a href="" title="{{ translate('ADF_WIDGET_TOOLTIP_EXPAND') }}" ng-show="options.collapsible && widgetState.isCollapsed" ng-click="widgetState.isCollapsed = !widgetState.isCollapsed">
+      <i class="glyphicon glyphicon-plus"></i>
+    </a>
+    <!-- open edit mode -->
+    <a href="" title="{{ translate('ADF_WIDGET_TOOLTIP_EDIT') }}" ng-click="edit()" ng-if="editMode">
+      <i class="glyphicon glyphicon-cog"></i>
+    </a>
+    <a href="" title="{{ translate('ADF_WIDGET_TOOLTIP_FULLSCREEN') }}" ng-click="openFullScreen()" ng-show="options.maximizable">
+     <i class="glyphicon glyphicon-fullscreen"></i>
+    </a>
+    <!-- remove widget -->
+    <a href="" title="{{ translate('ADF_WIDGET_TOOLTIP_REMOVE') }}" ng-click="remove()" ng-if="editMode">
+      <i class="glyphicon glyphicon-remove"></i>
+    </a>
+  </span>
+</h3>
