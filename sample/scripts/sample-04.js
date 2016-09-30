@@ -31,11 +31,9 @@ angular.module('sample-04', ['adf', 'LocalStorageModule'])
     // set default model for demo purposes
     model = {
       title: "Sample 04",
-      structure: "3-9 (12/6-6)",
       rows: [{
           "columns": [
             {
-              "styleClass": "col-md-3",
               "widgets": [
                 {
                   "type": "weather",
@@ -68,12 +66,10 @@ angular.module('sample-04', ['adf', 'LocalStorageModule'])
               ]
             },
             {
-              "styleClass": "col-md-9",
               "rows": [
                 {
                   "columns": [
                     {
-                      "styleClass": "col-md-12",
                       "widgets": [
                         {
                           "type": "markdown",
@@ -89,7 +85,6 @@ angular.module('sample-04', ['adf', 'LocalStorageModule'])
                 {
                   "columns": [
                     {
-                      "styleClass": "col-md-6",
                       "widgets": [
                         {
                           "type": "githubHistory",
@@ -101,7 +96,6 @@ angular.module('sample-04', ['adf', 'LocalStorageModule'])
                       ]
                     },
                     {
-                      "styleClass": "col-md-6",
                       "widgets": [
                         {
                           "type": "githubAuthor",
