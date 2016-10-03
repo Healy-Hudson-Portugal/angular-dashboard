@@ -166,7 +166,7 @@ angular.module('adf')
             backdrop: 'static'
           };
 
-          var instance = $mdDialog.open(opts);
+          var instance = $mdDialog.show(opts);
 
           editScope.closeDialog = function() {
             //instance.close();
@@ -286,7 +286,7 @@ angular.module('adf')
             windowClass: (definition.fullScreen) ? 'dashboard-modal widget-fullscreen' : 'dashboard-modal'
           };
 
-          var instance = $mdDialog.open(opts);
+          var instance = $mdDialog.show(opts);
           fullScreenScope.closeDialog = function() {
             //instance.close();
             fullScreenScope.$destroy();
