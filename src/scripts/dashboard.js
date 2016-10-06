@@ -316,7 +316,7 @@ angular.module('adf')
 
                       if (model) {
                           if (!model.title) {
-                              model.title = 'Dashboard';
+                              model.title = '';
                           }
                           if (!model.titleTemplateUrl) {
                               model.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
@@ -411,10 +411,9 @@ angular.module('adf')
                       }
                   };
                   editDashboardScope.closeDialog = function () {
-                      // copy the new title back to the model
-                      model.title = editDashboardScope.copy.title;
                       // close modal and destroy the scope
                       editDashboardScope.$destroy();
+                      
                   };
               };
 
