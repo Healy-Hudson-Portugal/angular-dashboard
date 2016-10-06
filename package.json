@@ -1,6 +1,6 @@
 {
   "name": "angular-dashboard-framework",
-  "version": "0.13.0-SNAPSHOT",
+  "version": "0.13.1",
   "license": "MIT",
   "authors": "Sebastian Sdorra",
   "dependencies": {
