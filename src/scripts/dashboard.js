@@ -370,6 +370,10 @@ angular.module('adf')
                   $rootScope.$broadcast('adfDashboardCollapseExpand', { collapseExpandStatus: collapseExpandStatus });
               };
 
+              $scope.$on('adfCancelEditMode', function () {
+                  $scope.cancelEditMode();
+              });
+
               $scope.cancelEditMode = function () {
                   $scope.editMode = false;
                   if (!$scope.continuousEditMode) {
@@ -377,6 +381,10 @@ angular.module('adf')
                   }
                   $rootScope.$broadcast('adfDashboardEditsCancelled');
               };
+
+              $scope.$on('adfEditDashboardDialog', function () {
+                  $scope.editDashboardDialog();
+              });
 
               // edit dashboard settings
               $scope.editDashboardDialog = function () {
@@ -416,6 +424,10 @@ angular.module('adf')
                       
                   };
               };
+
+              $scope.$on('adfAddWidgetDialog', function () {
+                  $scope.addWidgetDialog();
+              });
 
               // add widget dialog
               $scope.addWidgetDialog = function () {
