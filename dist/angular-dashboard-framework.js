@@ -1301,7 +1301,7 @@ angular.module('adf', ['adf.provider', 'adf.locale'])
   .value('adfTemplatePath', '../src/templates/')
   .value('rowTemplate', '<adf-dashboard-row row="row" adf-model="adfModel" options="options" edit-mode="editMode" ng-repeat="row in column.rows" />')
   .value('columnTemplate', '<adf-dashboard-column column="column" adf-model="adfModel" options="options" edit-mode="editMode" ng-repeat="column in row.columns" />')
-  .value('adfVersion', '0.13.2');
+  .value('adfVersion', '0.13.3');
 },{}],4:[function(require,module,exports){
 /*
  * The MIT License
@@ -2612,7 +2612,7 @@ angular.module('adf')
 
 /* global angular */
 angular.module('adf')
-  .directive('adfStructurePreview', function(adfTemplatePath) {
+  .directive('adfStructurePreview', function (dashboard, adfTemplatePath) {
 
     function adjustRowHeight(container){
       if (container.rows && container.rows.length > 0){
@@ -2645,7 +2645,7 @@ angular.module('adf')
         structure: '=',
         selected: '='
       },
-      templateUrl: adfTemplatePath + 'structure-preview.html',
+      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'structure-preview.html',
       link: prepareStructure
     };
   });

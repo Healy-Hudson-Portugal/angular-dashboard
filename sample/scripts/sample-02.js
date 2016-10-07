@@ -35,7 +35,7 @@ angular.module('sample-02', ['adf', 'LocalStorageModule'])
       structure: "6-6",
       rows: [{
         columns: [{
-          styleClass: "col-md-6",
+          flex: "50",
           widgets: [{
             fullScreen: false,
             modalSize: 'lg',
@@ -46,7 +46,7 @@ angular.module('sample-02', ['adf', 'LocalStorageModule'])
             title: "Markdown"
           }]
         }, {
-          styleClass: "col-md-6",
+          flex: "50",
           widgets: [{
             fullScreen: false,
             modalSize: 'sm',
@@ -73,6 +73,7 @@ angular.module('sample-02', ['adf', 'LocalStorageModule'])
   $scope.collapsible = true;
   $scope.maximizable = true;
   $scope.categories = false;
+  $scope.editable = true;
 
   $scope.$on('adfDashboardChanged', function(event, name, model) {
     localStorageService.set(name, model);
