@@ -1301,7 +1301,7 @@ angular.module('adf', ['adf.provider', 'adf.locale'])
   .value('adfTemplatePath', '../src/templates/')
   .value('rowTemplate', '<adf-dashboard-row row="row" adf-model="adfModel" options="options" edit-mode="editMode" ng-repeat="row in column.rows" />')
   .value('columnTemplate', '<adf-dashboard-column column="column" adf-model="adfModel" options="options" edit-mode="editMode" ng-repeat="column in row.columns" />')
-  .value('adfVersion', '0.13.0-SNAPSHOT');
+  .value('adfVersion', '0.13.2');
 },{}],4:[function(require,module,exports){
 /*
  * The MIT License
@@ -1899,6 +1899,10 @@ angular.module('adf')
                   $rootScope.$broadcast('adfDashboardCollapseExpand', { collapseExpandStatus: collapseExpandStatus });
               };
 
+              $scope.$on('adfCancelEditMode', function () {
+                  $scope.cancelEditMode();
+              });
+
               $scope.cancelEditMode = function () {
                   $scope.editMode = false;
                   if (!$scope.continuousEditMode) {
@@ -1906,6 +1910,10 @@ angular.module('adf')
                   }
                   $rootScope.$broadcast('adfDashboardEditsCancelled');
               };
+
+              $scope.$on('adfEditDashboardDialog', function () {
+                  $scope.editDashboardDialog();
+              });
 
               // edit dashboard settings
               $scope.editDashboardDialog = function () {
@@ -1945,6 +1953,10 @@ angular.module('adf')
                       
                   };
               };
+
+              $scope.$on('adfAddWidgetDialog', function () {
+                  $scope.addWidgetDialog();
+              });
 
               // add widget dialog
               $scope.addWidgetDialog = function () {
