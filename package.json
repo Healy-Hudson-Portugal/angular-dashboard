@@ -1,6 +1,6 @@
 {
-  "name": "angular-dashboard-framework",
-  "version": "0.13.3",
+  "name": "angular-material-dashboard-framework",
+  "version": "0.13.0-MD",
   "license": "MIT",
   "authors": "Sebastian Sdorra",
   "dependencies": {
