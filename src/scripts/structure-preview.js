@@ -26,7 +26,7 @@
 
 /* global angular */
 angular.module('adf')
-  .directive('adfStructurePreview', function(adfTemplatePath) {
+  .directive('adfStructurePreview', function (dashboard, adfTemplatePath) {
 
     function adjustRowHeight(container){
       if (container.rows && container.rows.length > 0){
@@ -59,7 +59,7 @@ angular.module('adf')
         structure: '=',
         selected: '='
       },
-      templateUrl: adfTemplatePath + 'structure-preview.html',
+      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'structure-preview.html',
       link: prepareStructure
     };
   });

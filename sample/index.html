@@ -33,8 +33,8 @@
     <title>Dashboard</title>
 
     <!-- build:css css/sample.min.css -->
-    <!-- Bootstrap core CSS -->
-    <link href="components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <!-- angular-material core CSS -->
+    <link href="components/angular-material/angular-material.css" rel="stylesheet">
 
     <!-- dashboard style -->
     <link href="../dist/angular-dashboard-framework.css" rel="stylesheet">
@@ -61,7 +61,7 @@
     <![endif]-->
 
     <!-- inlince css -->
-    <style type="text/css">
+<!--    <style type="text/css">
       body {
         padding-top: 60px;
       }
@@ -71,7 +71,20 @@
         /* some fixes appear to use this, too: */
         position: fixed;
       }
-    </style>
+      .panel {
+        margin-bottom: 20px;
+        background-color: #fff;
+      }
+      .pull-right {
+        float: right !important;
+      }
+      .panel-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 16px;
+        color: inherit;
+      }
+    </style>-->
   </head>
 
   <body ng-app="sample">
@@ -125,14 +138,16 @@
 
     <!-- build:js js/sample.min.js -->
     <!-- Sortable -->
-    <script type="text/javascript" src="components/Sortable/Sortable.js"></script>
+    <!--<script type="text/javascript" src="components/Sortable/Sortable.js"></script>-->
 
-    <!-- angular-bootstrap -->
-    <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap.js"></script>
-    <script type="text/javascript" src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <!-- angular-material -->
+    <script type="text/javascript" src="components/angular-aria/angular-aria.js"></script>
+    <script type="text/javascript" src="components/angular-messages/angular-messages.js"></script>
+    <script type="text/javascript" src="components/angular-animate/angular-animate.js"></script>
+    <script type="text/javascript" src="components/angular-material/angular-material.js"></script>
 
     <!-- scripts -->
-    <script type="text/javascript" src="../src/scripts/adf.js"></script>
+    <!--<script type="text/javascript" src="../src/scripts/adf.js"></script>
     <script type="text/javascript" src="../src/scripts/adf.locale.js"></script>
     <script type="text/javascript" src="../src/scripts/locale-constant.js"></script>
     <script type="text/javascript" src="../src/scripts/provider.js"></script>
@@ -143,9 +158,11 @@
     <script type="text/javascript" src="../src/scripts/structure-preview.js"></script>
     <script type="text/javascript" src="../src/scripts/order-by-object-key.js"></script>
     <script type="text/javascript" src="../src/scripts/column.js"></script>
-    <script type="text/javascript" src="../src/scripts/row.js"></script>
+    <script type="text/javascript" src="../src/scripts/row.js"></script>-->
+      
+    <script type="text/javascript" src="../dist/angular-dashboard-framework.js"></script>
 
-    <!-- local storage -->
+      <!-- local storage -->
     <script type="text/javascript" src="components/angular-local-storage/dist/angular-local-storage.js"></script>
 
     <!-- sample -->

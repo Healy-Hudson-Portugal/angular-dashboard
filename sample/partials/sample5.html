@@ -3,6 +3,9 @@
     <ul>
         <li ng-repeat="event in eventsFired">{{ event.name }}</li>
     </ul>
+    <md-button  ng-click="EditDashBoard()" aria-label="Add">
+        Edit
+    </md-button>
     <adf-dashboard
             name="{{ name }}"
             collapsible="{{ collapsible }}"

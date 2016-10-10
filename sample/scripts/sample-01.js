@@ -32,10 +32,9 @@ angular.module('sample-01', ['adf', 'LocalStorageModule'])
     // set default model for demo purposes
     model = {
       title: "Sample 01",
-      structure: "4-8",
       rows: [{
         columns: [{
-          styleClass: "col-md-4",
+          flex:30,
           widgets: [{
             type: "linklist",
             config: {
@@ -74,7 +73,7 @@ angular.module('sample-01', ['adf', 'LocalStorageModule'])
             title: "Weather"
           }]
         }, {
-          styleClass: "col-md-8",
+          flex: 70,
           widgets: [{
             type: "randommsg",
             config: {},

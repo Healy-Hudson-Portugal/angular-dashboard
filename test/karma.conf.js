@@ -40,9 +40,7 @@ module.exports = function(config) {
             'sample/components/angular/angular.js',
             'sample/components/angular-mocks/angular-mocks.js',
             'sample/components/angular-route/angular-route.js',
-            'sample/components/angular-bootstrap/ui-bootstrap.js',
             'sample/components/Sortable/Sortable.js',
-            'sample/components/bootstrap/dist/js/bootstrap.js',
             'sample/components/angular-local-storage/dist/angular-local-storage.js',
             'sample/scripts/sample.js',
 

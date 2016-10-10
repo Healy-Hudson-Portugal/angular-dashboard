@@ -73,6 +73,11 @@ angular.module('sample-05', ['adf', 'LocalStorageModule'])
         localStorageService.set(name, model);
     };
 
+    $scope.EditDashBoard = function () {
+        $scope.$broadcast('adfToggleEditMode');
+    };
+
+    $scope.$on('adfToggleEditMode', eventFired);
     $scope.$on('adfDashboardChanged', eventFired);
     $scope.$on('adfWidgetAdded', eventFired);
     $scope.$on('adfWidgetMoved', eventFired);
