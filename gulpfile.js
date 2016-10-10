@@ -48,7 +48,7 @@ var templateOptions = {
 
 var annotateOptions = {
   enable: [
-    'angular-dashboard-framework'
+    'angular-material-dashboard-framework'
   ]
 };
 
@@ -149,10 +149,10 @@ gulp.task('js-with-tpls', function() {
 
 gulp.task('build', ['styles', 'jsdepend' ]);
 
-gulp.task('jsdepend', _js.bind(this, 'angular-dashboard-framework.js'));
+gulp.task('jsdepend', _js.bind(this, 'angular-material-dashboard-framework.js'));
 
 gulp.task('browserify', function () {
-    return browserify('./app/angular-dashboard-framework.js')
+    return browserify('./app/angular-material-dashboard-framework.js')
       .bundle()
       .pipe(source(name+'.js'))
       .pipe($.if('*.js', $.replace('<<adfVersion>>', pkg.version)))
