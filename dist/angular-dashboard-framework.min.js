@@ -1946,7 +1946,7 @@ angular.module('adf')
                       if (model.structure !== name) {
                           model.structure = name;
                       }
-                      $rootScope.$broadcast('adfEditDashboardDialogCompleted');
+                      
                   };
                   editDashboardScope.closeDialog = function () {
                       // close modal and destroy the scope
