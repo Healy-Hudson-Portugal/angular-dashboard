@@ -1,3 +1,8 @@
+# 0.13.0-MD
+
+## Changes
+* Move to Material Design
+
 # 0.12.0
 
 ## Enhancements
