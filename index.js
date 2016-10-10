@@ -1,2 +1,2 @@
-require('./dist/angular-dashboard-framework');
+require('./dist/angular-material-dashboard-framework');
 module.exports = 'adf';
