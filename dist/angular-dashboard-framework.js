@@ -1811,6 +1811,7 @@ angular.module('adf')
               continuousEditMode: '=',
               maximizable: '@',
               adfModel: '=',
+              adfTitle: '=',
               adfWidgetFilter: '=',
               categories: '@'
               
@@ -1821,7 +1822,7 @@ angular.module('adf')
               var widgetFilter = null;
               var structureName = {};
               var name = $scope.name;
-
+              
               // Watching for changes on adfModel
               $scope.$watch('adfModel', function (oldVal, newVal) {
                   // has model changed or is the model attribute not set
@@ -1844,16 +1845,17 @@ angular.module('adf')
                       }
 
                       if (model) {
-                          if (!model.title) {
-                              model.title = '';
-                          }
-                          if (!model.titleTemplateUrl) {
-                              model.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
-                          }
                           $scope.model = model;
                       } else {
                           $log.error('could not find or create model');
                       }
+                  }
+              }, true);
+
+              $scope.$watch('adfTitle', function (oldVal, newVal) {
+                  // has model changed or is the model attribute not set
+                  if (newVal !== null || (oldVal === null && newVal === null)) {
+                      $scope.title = $scope.adfTitle;
                   }
               }, true);
 
@@ -1920,9 +1922,7 @@ angular.module('adf')
                   var editDashboardScope = getNewModalScope();
                   // create a copy of the title, to avoid changing the title to
                   // "dashboard" if the field is empty
-                  editDashboardScope.copy = {
-                      title: model.title
-                  };
+                  
 
                   // pass dashboard structure to scope
                   editDashboardScope.structures = dashboard.structures;
