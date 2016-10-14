@@ -318,9 +318,6 @@ angular.module('adf')
                           if (!model.title) {
                               model.title = '';
                           }
-                          if (!model.titleTemplateUrl) {
-                              model.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
-                          }
                           $scope.model = model;
                       } else {
                           $log.error('could not find or create model');
@@ -340,6 +337,9 @@ angular.module('adf')
 
               //passs translate function from dashboard so we can translate labels inside html templates
               $scope.translate = dashboard.translate;
+
+              // Define the template url internally avoid using model.
+              $scope.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
 
               function getNewModalScope() {
                   var scope = $scope.$new();
