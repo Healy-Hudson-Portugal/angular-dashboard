@@ -1847,9 +1847,6 @@ angular.module('adf')
                           if (!model.title) {
                               model.title = '';
                           }
-                          if (!model.titleTemplateUrl) {
-                              model.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
-                          }
                           $scope.model = model;
                       } else {
                           $log.error('could not find or create model');
@@ -1869,6 +1866,9 @@ angular.module('adf')
 
               //passs translate function from dashboard so we can translate labels inside html templates
               $scope.translate = dashboard.translate;
+
+              // Define the template url internally avoid using model.
+              $scope.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
 
               function getNewModalScope() {
                   var scope = $scope.$new();
@@ -2917,17 +2917,19 @@ angular.module('adf')
             definition.title = w.title;
           }
 
+          // Define title template url internally avoid using model.
           if (!definition.titleTemplateUrl) {
-              definition.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-title.html';
+              $scope.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-title.html';
             if (w.titleTemplateUrl) {
-              definition.titleTemplateUrl = w.titleTemplateUrl;
+              $scope.titleTemplateUrl = w.titleTemplateUrl;
             }
           }
-
+          
+          // Define edit template url internally avoid using model.
           if (!definition.editTemplateUrl) {
-              definition.editTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
+              $scope.editTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
             if (w.editTemplateUrl) {
-              definition.editTemplateUrl = w.editTemplateUrl;
+              $scope.editTemplateUrl = w.editTemplateUrl;
             }
           }
 

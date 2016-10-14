@@ -41,17 +41,19 @@ angular.module('adf')
             definition.title = w.title;
           }
 
+          // Define title template url internally avoid using model.
           if (!definition.titleTemplateUrl) {
-              definition.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-title.html';
+              $scope.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-title.html';
             if (w.titleTemplateUrl) {
-              definition.titleTemplateUrl = w.titleTemplateUrl;
+              $scope.titleTemplateUrl = w.titleTemplateUrl;
             }
           }
-
+          
+          // Define edit template url internally avoid using model.
           if (!definition.editTemplateUrl) {
-              definition.editTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
+              $scope.editTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
             if (w.editTemplateUrl) {
-              definition.editTemplateUrl = w.editTemplateUrl;
+              $scope.editTemplateUrl = w.editTemplateUrl;
             }
           }
 
