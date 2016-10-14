@@ -48,7 +48,7 @@
  */
 
 angular.module('adf')
-  .directive('adfDashboard', function ($rootScope, $log, $timeout, dashboard, adfTemplatePath, $mdDialog) {
+  .directive('adfDashboard', function ($rootScope, $log, $timeout, dashboard, $mdDialog) {
 
       'use strict';
 
@@ -292,6 +292,7 @@ angular.module('adf')
               var widgetFilter = null;
               var structureName = {};
               var name = $scope.name;
+              var path = {};
 
               // Watching for changes on adfModel
               $scope.$watch('adfModel', function (oldVal, newVal) {
@@ -318,13 +319,13 @@ angular.module('adf')
                           if (!model.title) {
                               model.title = '';
                           }
-                          if (!model.titleTemplateUrl) {
-                              model.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
-                          }
+                          
                           $scope.model = model;
                       } else {
                           $log.error('could not find or create model');
                       }
+
+                      path = 'testing';
                   }
               }, true);
 
@@ -338,13 +339,10 @@ angular.module('adf')
               // use to build an unique id for each dashboard
               $scope.timestamp = Date.now();
 
-              //passs translate function from dashboard so we can translate labels inside html templates
-              $scope.translate = dashboard.translate;
+              $scope.titleTemplateUrl = dashboard.adfTemplatePath + 'dashboard-title.html';
 
               function getNewModalScope() {
                   var scope = $scope.$new();
-                  //pass translate function to the new scope so we can translate the labels inside the modal dialog
-                  scope.translate = dashboard.translate;
                   return scope;
               }
 
@@ -401,10 +399,8 @@ angular.module('adf')
                   // pass split function to scope, to be able to display structures in multiple columns
                   editDashboardScope.split = split;
 
-                  var adfEditTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-edit.html';
-                  if (model.editTemplateUrl) {
-                      adfEditTemplatePath = model.editTemplateUrl;
-                  }
+                  var adfEditTemplatePath = dashboard.adfTemplatePath + 'dashboard-edit.html';
+                  
                   var instance = $mdDialog.show({
                     scope: editDashboardScope,
                     templateUrl: adfEditTemplatePath,
@@ -447,15 +443,12 @@ angular.module('adf')
                   }
                   addScope.widgets = widgets;
 
-                  //pass translate function to the new scope so we can translate the labels inside the modal dialog
-                  addScope.translate = $scope.translate;
-
                   // pass createCategories function to scope, if categories option is enabled
                   if ($scope.options.categories) {
                       $scope.createCategories = createCategories;
                   }
 
-                  var adfAddTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-add.html';
+                  var adfAddTemplatePath = dashboard.adfTemplatePath + 'widget-add.html';
                   if (model.addTemplateUrl) {
                       adfAddTemplatePath = model.addTemplateUrl;
                   }
@@ -505,6 +498,6 @@ angular.module('adf')
               }
               $scope.options = options;
           },
-          templateUrl:(!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard.html'
+          templateUrl:dashboard.adfTemplatePath + 'dashboard.html'
       };
   });

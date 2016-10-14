@@ -5,10 +5,8 @@
 'use strict';
 
 require('../src/scripts/adf.js');
-require('../src/scripts/adf.locale.js');
 require('../src/scripts/column.js');
 require('../src/scripts/dashboard.js');
-require('../src/scripts/locale-constant.js');
 require('../src/scripts/order-by-object-key.js');
 require('../src/scripts/provider.js');
 require('../src/scripts/row.js');
@@ -19,7 +17,7 @@ require('../src/scripts/widget.js');
 
 // eva-lib.js:end
 
-},{"../src/scripts/adf.js":3,"../src/scripts/adf.locale.js":4,"../src/scripts/column.js":5,"../src/scripts/dashboard.js":6,"../src/scripts/locale-constant.js":7,"../src/scripts/order-by-object-key.js":8,"../src/scripts/provider.js":9,"../src/scripts/row.js":10,"../src/scripts/structure-preview.js":11,"../src/scripts/widget-content.js":12,"../src/scripts/widget-service.js":13,"../src/scripts/widget.js":14}],2:[function(require,module,exports){
+},{"../src/scripts/adf.js":3,"../src/scripts/column.js":4,"../src/scripts/dashboard.js":5,"../src/scripts/order-by-object-key.js":6,"../src/scripts/provider.js":7,"../src/scripts/row.js":8,"../src/scripts/structure-preview.js":9,"../src/scripts/widget-content.js":10,"../src/scripts/widget-service.js":11,"../src/scripts/widget.js":12}],2:[function(require,module,exports){
 /**!
  * Sortable
  * @author	RubaXa   <trash@rubaxa.org>
@@ -1297,41 +1295,11 @@ require('../src/scripts/widget.js');
 
 'use strict';
 
-angular.module('adf', ['adf.provider', 'adf.locale'])
-  .value('adfTemplatePath', '../src/templates/')
+angular.module('adf', ['adf.provider'])
   .value('rowTemplate', '<adf-dashboard-row row="row" adf-model="adfModel" options="options" edit-mode="editMode" ng-repeat="row in column.rows" />')
   .value('columnTemplate', '<adf-dashboard-column column="column" adf-model="adfModel" options="options" edit-mode="editMode" ng-repeat="column in row.columns" />')
   .value('adfVersion', '0.13.0-MD-0.0.3');
 },{}],4:[function(require,module,exports){
-/*
- * The MIT License
- *
- * Copyright (c) 2015, Sebastian Sdorra
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-'use strict';
-
-angular.module('adf.locale', [])
-
-},{}],5:[function(require,module,exports){
 /*
 * The MIT License
 *
@@ -1360,7 +1328,7 @@ var Sortable = require('sortablejs');
 
 /* global angular */
 angular.module('adf')
-  .directive('adfDashboardColumn', function ($log, $compile, $rootScope, adfTemplatePath, rowTemplate, dashboard) {
+  .directive('adfDashboardColumn', function ($log, $compile, $rootScope, rowTemplate, dashboard) {
     'use strict';
 
     /**
@@ -1505,7 +1473,7 @@ angular.module('adf')
         adfModel: '=',
         options: '='
       },
-      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-column.html',
+      templateUrl: dashboard.adfTemplatePath + 'dashboard-column.html',
       link: function ($scope, $element) {
         // set id
         var col = $scope.column;
@@ -1526,7 +1494,7 @@ angular.module('adf')
     };
   });
 
-},{"sortablejs":2}],6:[function(require,module,exports){
+},{"sortablejs":2}],5:[function(require,module,exports){
 /*
  * The MIT License
  *
@@ -1577,7 +1545,7 @@ angular.module('adf')
  */
 
 angular.module('adf')
-  .directive('adfDashboard', function ($rootScope, $log, $timeout, dashboard, adfTemplatePath, $mdDialog) {
+  .directive('adfDashboard', function ($rootScope, $log, $timeout, dashboard, $mdDialog) {
 
       'use strict';
 
@@ -1821,6 +1789,7 @@ angular.module('adf')
               var widgetFilter = null;
               var structureName = {};
               var name = $scope.name;
+              var path = {};
 
               // Watching for changes on adfModel
               $scope.$watch('adfModel', function (oldVal, newVal) {
@@ -1847,13 +1816,13 @@ angular.module('adf')
                           if (!model.title) {
                               model.title = '';
                           }
-                          if (!model.titleTemplateUrl) {
-                              model.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-title.html';
-                          }
+                          
                           $scope.model = model;
                       } else {
                           $log.error('could not find or create model');
                       }
+
+                      path = 'testing';
                   }
               }, true);
 
@@ -1867,13 +1836,10 @@ angular.module('adf')
               // use to build an unique id for each dashboard
               $scope.timestamp = Date.now();
 
-              //passs translate function from dashboard so we can translate labels inside html templates
-              $scope.translate = dashboard.translate;
+              $scope.titleTemplateUrl = dashboard.adfTemplatePath + 'dashboard-title.html';
 
               function getNewModalScope() {
                   var scope = $scope.$new();
-                  //pass translate function to the new scope so we can translate the labels inside the modal dialog
-                  scope.translate = dashboard.translate;
                   return scope;
               }
 
@@ -1930,10 +1896,8 @@ angular.module('adf')
                   // pass split function to scope, to be able to display structures in multiple columns
                   editDashboardScope.split = split;
 
-                  var adfEditTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-edit.html';
-                  if (model.editTemplateUrl) {
-                      adfEditTemplatePath = model.editTemplateUrl;
-                  }
+                  var adfEditTemplatePath = dashboard.adfTemplatePath + 'dashboard-edit.html';
+                  
                   var instance = $mdDialog.show({
                     scope: editDashboardScope,
                     templateUrl: adfEditTemplatePath,
@@ -1976,15 +1940,12 @@ angular.module('adf')
                   }
                   addScope.widgets = widgets;
 
-                  //pass translate function to the new scope so we can translate the labels inside the modal dialog
-                  addScope.translate = $scope.translate;
-
                   // pass createCategories function to scope, if categories option is enabled
                   if ($scope.options.categories) {
                       $scope.createCategories = createCategories;
                   }
 
-                  var adfAddTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-add.html';
+                  var adfAddTemplatePath = dashboard.adfTemplatePath + 'widget-add.html';
                   if (model.addTemplateUrl) {
                       adfAddTemplatePath = model.addTemplateUrl;
                   }
@@ -2034,97 +1995,10 @@ angular.module('adf')
               }
               $scope.options = options;
           },
-          templateUrl:(!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard.html'
+          templateUrl:dashboard.adfTemplatePath + 'dashboard.html'
       };
   });
-},{}],7:[function(require,module,exports){
-/*
-* The MIT License
-*
-* Copyright (c) 2015, Sebastian Sdorra
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*/
-
-'use strict';
-
-/**
-* @ngdoc object
-* @name adf.locale#adfLocale
-* @description
-*
-* Holds settings and values for framework supported locales
-*/
-angular.module('adf.locale')
-.constant('adfLocale',
-  {
-    defaultLocale: 'en-GB',
-    frameworkLocales: {
-      'en-GB': {
-        ADF_COMMON_CLOSE: 'Close',
-        ADF_COMMON_DELETE: 'Delete',
-        ADF_COMMON_TITLE: 'Title',
-        ADF_COMMON_CANCEL: 'Cancel',
-        ADF_COMMON_APPLY: 'Apply',
-        ADF_COMMON_EDIT_DASHBOARD: 'Edit dashboard',
-        ADF_EDIT_DASHBOARD_STRUCTURE_LABEL: 'Structure',
-        ADF_DASHBOARD_TITLE_TOOLTIP_ADD: 'Add new widget',
-        ADF_DASHBOARD_TITLE_TOOLTIP_SAVE: 'Save changes',
-        ADF_DASHBOARD_TITLE_TOOLTIP_EDIT_MODE: 'Enable edit mode',
-        ADF_DASHBOARD_TITLE_TOOLTIP_UNDO: 'Undo changes',
-        ADF_WIDGET_ADD_HEADER: 'Add new widget',
-        ADF_WIDGET_DELETE_CONFIRM_MESSAGE: 'Are you sure you want to delete this widget ?',
-        ADF_WIDGET_TOOLTIP_REFRESH: 'Reload widget Content',
-        ADF_WIDGET_TOOLTIP_MOVE: 'Change widget location',
-        ADF_WIDGET_TOOLTIP_COLLAPSE: 'Collapse widget',
-        ADF_WIDGET_TOOLTIP_EXPAND: 'Expand widget',
-        ADF_WIDGET_TOOLTIP_EDIT: 'Edit widget configuration',
-        ADF_WIDGET_TOOLTIP_FULLSCREEN: 'Fullscreen widget',
-        ADF_WIDGET_TOOLTIP_REMOVE: 'Remove widget'
-      },
-      'sv-SE': {
-        ADF_COMMON_CLOSE: 'Stäng',
-        ADF_COMMON_DELETE: 'Ta bort',
-        ADF_COMMON_TITLE: 'Titel',
-        ADF_COMMON_CANCEL: 'Avbryt',
-        ADF_COMMON_APPLY: 'Använd',
-        ADF_COMMON_EDIT_DASHBOARD: 'Redigera dashboard',
-        ADF_EDIT_DASHBOARD_STRUCTURE_LABEL: 'Struktur',
-        ADF_DASHBOARD_TITLE_TOOLTIP_ADD: 'Lägg till ny widget',
-        ADF_DASHBOARD_TITLE_TOOLTIP_SAVE: 'Spara förändringar',
-        ADF_DASHBOARD_TITLE_TOOLTIP_EDIT_MODE: 'Slå på redigeringsläge',
-        ADF_DASHBOARD_TITLE_TOOLTIP_UNDO: 'Ångra förändringar',
-        ADF_WIDGET_ADD_HEADER: 'Lägg till ny widget',
-        ADF_WIDGET_DELETE_CONFIRM_MESSAGE: 'Är du säker på att du vill ta bort denna widget ?',
-        ADF_WIDGET_TOOLTIP_REFRESH: 'Ladda om widget',
-        ADF_WIDGET_TOOLTIP_MOVE: 'Ändra widgets position',
-        ADF_WIDGET_TOOLTIP_COLLAPSE: 'Stäng widget',
-        ADF_WIDGET_TOOLTIP_EXPAND: 'Öppna widget',
-        ADF_WIDGET_TOOLTIP_EDIT: 'Ändra widget konfigurering',
-        ADF_WIDGET_TOOLTIP_FULLSCREEN: 'Visa widget i fullskärm',
-        ADF_WIDGET_TOOLTIP_REMOVE: 'Ta bort widget'
-      }
-    }
-  }
-);
-
-},{}],8:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /*
 * The MIT License
 *
@@ -2165,7 +2039,7 @@ angular.module('adf')
     };
   });
 
-},{}],9:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * The MIT License
  *
@@ -2199,8 +2073,8 @@ angular.module('adf')
  *
  * The dashboardProvider can be used to register structures and widgets.
  */
-angular.module('adf.provider', ['adf.locale'])
-  .provider('dashboard', function(adfLocale){
+angular.module('adf.provider', [])
+  .provider('dashboard', function(){
 
     var widgets = {};
     var widgetsPath = '';
@@ -2213,28 +2087,12 @@ angular.module('adf.provider', ['adf.locale'])
         </div>\n\
       </div>';
     var customWidgetTemplatePath = null;
-    var customDashboardTemplatePath = null;
+    var adfTemplatePath = null;
 
     // default apply function of widget.edit.apply
     var defaultApplyFunction = function(){
       return true;
     };
-
-    var activeLocale = adfLocale.defaultLocale;
-    var locales = adfLocale.frameworkLocales;
-
-    function getLocales() {
-      return locales;
-    }
-
-    function getActiveLocale() {
-      return activeLocale;
-    }
-
-    function translate(label) {
-      var translation = locales[activeLocale][label];
-      return translation ? translation : label;
-    }
 
    /**
     * @ngdoc method
@@ -2335,8 +2193,8 @@ angular.module('adf.provider', ['adf.locale'])
       return this;
     };
 
-    this.customDashboardTemplatePath = function (path) {
-        customDashboardTemplatePath = path;
+    this.adfTemplatePath = function (path) {
+        adfTemplatePath = path;
         return this;
     };
 
@@ -2417,53 +2275,6 @@ angular.module('adf.provider', ['adf.locale'])
       return this;
     };
 
-    /**
-     * @ngdoc method
-     * @name adf.dashboardProvider#setLocale
-     * @methodOf adf.dashboardProvider
-     * @description
-     *
-     * Changes the locale setting of adf
-     *
-     * @param {string} ISO Language Code
-     *
-     * @returns {Object} self
-     */
-     this.setLocale = function(locale){
-       if(locales[locale]) {
-         activeLocale = locale;
-       } else {
-         throw new Error('Cannot set locale: ' + locale + '. Locale is not defined.');
-       }
-       return this;
-     };
-
-     /**
-      * @ngdoc method
-      * @name adf.dashboardProvider#addLocale
-      * @methodOf adf.dashboardProvider
-      * @description
-      *
-      * Adds a new locale to adf
-      *
-      * @param {string} ISO Language Code for the new locale
-      * @param {object} translations for the locale.
-      *
-      * @returns {Object} self
-      */
-      this.addLocale = function(locale, translations){
-        if(!angular.isString(locale)) {
-          throw new Error('locale must be an string');
-        }
-
-        if(!angular.isObject(translations)) {
-          throw new Error('translations must be an object');
-        }
-
-        locales[locale] = translations;
-        return this;
-      };
-
    /**
     * @ngdoc service
     * @name adf.dashboard
@@ -2492,12 +2303,8 @@ angular.module('adf.provider', ['adf.locale'])
         structures: structures,
         messageTemplate: messageTemplate,
         loadingTemplate: loadingTemplate,
-        setLocale: this.setLocale,
-        locales: getLocales,
-        activeLocale: getActiveLocale,
-        translate: translate,
         customWidgetTemplatePath: customWidgetTemplatePath,
-        customDashboardTemplatePath: customDashboardTemplatePath,
+        adfTemplatePath: adfTemplatePath,
 
         /**
          * @ngdoc method
@@ -2532,7 +2339,7 @@ angular.module('adf.provider', ['adf.locale'])
 
   });
 
-},{}],10:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*
 * The MIT License
 *
@@ -2560,7 +2367,7 @@ angular.module('adf.provider', ['adf.locale'])
 
 /* global angular */
 angular.module('adf')
-  .directive('adfDashboardRow', function ($compile, adfTemplatePath, columnTemplate, dashboard) {
+  .directive('adfDashboardRow', function ($compile, columnTemplate, dashboard) {
     'use strict';
 
     return {
@@ -2573,7 +2380,7 @@ angular.module('adf')
         continuousEditMode: '=',
         options: '='
       },
-      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-row.html',
+      templateUrl: dashboard.adfTemplatePath + 'dashboard-row.html',
       link: function($scope, $element) {
         if (angular.isDefined($scope.row.columns) && angular.isArray($scope.row.columns)) {
           $compile(columnTemplate)($scope, function(cloned) {
@@ -2584,7 +2391,7 @@ angular.module('adf')
     };
   });
 
-},{}],11:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*
  * The MIT License
  *
@@ -2613,7 +2420,7 @@ angular.module('adf')
 
 /* global angular */
 angular.module('adf')
-  .directive('adfStructurePreview', function (dashboard, adfTemplatePath) {
+  .directive('adfStructurePreview', function (dashboard) {
 
     function adjustRowHeight(container){
       if (container.rows && container.rows.length > 0){
@@ -2646,12 +2453,12 @@ angular.module('adf')
         structure: '=',
         selected: '='
       },
-      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'structure-preview.html',
+      templateUrl: dashboard.adfTemplatePath + 'structure-preview.html',
       link: prepareStructure
     };
   });
 
-},{}],12:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*
  * The MIT License
  *
@@ -2795,7 +2602,7 @@ angular.module('adf')
 
   });
 
-},{}],13:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 /*
  * The MIT License
@@ -2873,7 +2680,7 @@ angular.module('adf')
     return exposed;
   });
 
-},{}],14:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /*
  * The MIT License
  *
@@ -2901,13 +2708,10 @@ angular.module('adf')
 'use strict';
 
 angular.module('adf')
-  .directive('adfWidget', function ($injector, $q, $log, $rootScope, dashboard, adfTemplatePath, $mdDialog) {
+  .directive('adfWidget', function ($injector, $q, $log, $rootScope, dashboard, $mdDialog) {
 
     function preLink($scope) {
       var definition = $scope.definition;
-
-      //passs translate function from dashboard so we can translate labels inside html templates
-      $scope.translate = dashboard.translate;
 
       if (definition) {
         var w = dashboard.widgets[definition.type];
@@ -2917,19 +2721,9 @@ angular.module('adf')
             definition.title = w.title;
           }
 
-          if (!definition.titleTemplateUrl) {
-              definition.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-title.html';
-            if (w.titleTemplateUrl) {
-              definition.titleTemplateUrl = w.titleTemplateUrl;
-            }
-          }
+          $scope.titleTemplateUrl = dashboard.adfTemplatePath + 'widget-title.html';
 
-          if (!definition.editTemplateUrl) {
-              definition.editTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
-            if (w.editTemplateUrl) {
-              definition.editTemplateUrl = w.editTemplateUrl;
-            }
-          }
+          $scope.editTemplateUrl = dashboard.adfTemplatePath + 'widget-edit.html';
 
           if (!definition.titleTemplateUrl) {
             definition.frameless = w.frameless;
@@ -2994,9 +2788,8 @@ angular.module('adf')
         $scope.remove = function() {
           if ($scope.options.enableConfirmDelete) {
             var deleteScope = $scope.$new();
-            deleteScope.translate = dashboard.translate;
 
-            var deleteTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-delete.html';
+            var deleteTemplateUrl = dashboard.adfTemplatePath + 'widget-delete.html';
             if (definition.deleteTemplateUrl) {
               deleteTemplateUrl = definition.deleteTemplateUrl;
             }
@@ -3028,14 +2821,10 @@ angular.module('adf')
         // bind edit function
         $scope.edit = function() {
           var editScope = $scope.$new();
-          editScope.translate = dashboard.translate;
           editScope.definition = angular.copy(definition);
 
-          var adfEditTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
-          if (definition.editTemplateUrl) {
-            adfEditTemplatePath = definition.editTemplateUrl;
-          }
-
+          var adfEditTemplatePath = dashboard.adfTemplatePath + 'widget-edit.html';
+         
           var opts = {
             scope: editScope,
             templateUrl: adfEditTemplatePath,
@@ -3121,7 +2910,7 @@ angular.module('adf')
       replace: true,
       restrict: 'EA',
       transclude: false,
-      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget.html',
+      templateUrl: dashboard.adfTemplatePath + 'widget.html',
       scope: {
         definition: '=',
         col: '=column',
@@ -3156,7 +2945,7 @@ angular.module('adf')
           var fullScreenScope = $scope.$new();
           var opts = {
             scope: fullScreenScope,
-            templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-fullscreen.html',
+            templateUrl: dashboard.adfTemplatePath + 'widget-fullscreen.html',
             size: definition.modalSize || 'lg', // 'sm', 'lg'
             backdrop: 'static',
             windowClass: (definition.fullScreen) ? 'dashboard-modal widget-fullscreen' : 'dashboard-modal'

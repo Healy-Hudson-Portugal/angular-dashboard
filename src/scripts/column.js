@@ -26,7 +26,7 @@ var Sortable = require('sortablejs');
 
 /* global angular */
 angular.module('adf')
-  .directive('adfDashboardColumn', function ($log, $compile, $rootScope, adfTemplatePath, rowTemplate, dashboard) {
+  .directive('adfDashboardColumn', function ($log, $compile, $rootScope, rowTemplate, dashboard) {
     'use strict';
 
     /**
@@ -171,7 +171,7 @@ angular.module('adf')
         adfModel: '=',
         options: '='
       },
-      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-column.html',
+      templateUrl: dashboard.adfTemplatePath + 'dashboard-column.html',
       link: function ($scope, $element) {
         // set id
         var col = $scope.column;

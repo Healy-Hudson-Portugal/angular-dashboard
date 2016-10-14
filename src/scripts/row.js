@@ -25,7 +25,7 @@
 
 /* global angular */
 angular.module('adf')
-  .directive('adfDashboardRow', function ($compile, adfTemplatePath, columnTemplate, dashboard) {
+  .directive('adfDashboardRow', function ($compile, columnTemplate, dashboard) {
     'use strict';
 
     return {
@@ -38,7 +38,7 @@ angular.module('adf')
         continuousEditMode: '=',
         options: '='
       },
-      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'dashboard-row.html',
+      templateUrl: dashboard.adfTemplatePath + 'dashboard-row.html',
       link: function($scope, $element) {
         if (angular.isDefined($scope.row.columns) && angular.isArray($scope.row.columns)) {
           $compile(columnTemplate)($scope, function(cloned) {

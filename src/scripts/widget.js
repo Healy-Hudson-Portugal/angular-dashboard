@@ -25,13 +25,10 @@
 'use strict';
 
 angular.module('adf')
-  .directive('adfWidget', function ($injector, $q, $log, $rootScope, dashboard, adfTemplatePath, $mdDialog) {
+  .directive('adfWidget', function ($injector, $q, $log, $rootScope, dashboard, $mdDialog) {
 
     function preLink($scope) {
       var definition = $scope.definition;
-
-      //passs translate function from dashboard so we can translate labels inside html templates
-      $scope.translate = dashboard.translate;
 
       if (definition) {
         var w = dashboard.widgets[definition.type];
@@ -41,19 +38,9 @@ angular.module('adf')
             definition.title = w.title;
           }
 
-          if (!definition.titleTemplateUrl) {
-              definition.titleTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-title.html';
-            if (w.titleTemplateUrl) {
-              definition.titleTemplateUrl = w.titleTemplateUrl;
-            }
-          }
+          $scope.titleTemplateUrl = dashboard.adfTemplatePath + 'widget-title.html';
 
-          if (!definition.editTemplateUrl) {
-              definition.editTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
-            if (w.editTemplateUrl) {
-              definition.editTemplateUrl = w.editTemplateUrl;
-            }
-          }
+          $scope.editTemplateUrl = dashboard.adfTemplatePath + 'widget-edit.html';
 
           if (!definition.titleTemplateUrl) {
             definition.frameless = w.frameless;
@@ -118,9 +105,8 @@ angular.module('adf')
         $scope.remove = function() {
           if ($scope.options.enableConfirmDelete) {
             var deleteScope = $scope.$new();
-            deleteScope.translate = dashboard.translate;
 
-            var deleteTemplateUrl = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-delete.html';
+            var deleteTemplateUrl = dashboard.adfTemplatePath + 'widget-delete.html';
             if (definition.deleteTemplateUrl) {
               deleteTemplateUrl = definition.deleteTemplateUrl;
             }
@@ -152,14 +138,10 @@ angular.module('adf')
         // bind edit function
         $scope.edit = function() {
           var editScope = $scope.$new();
-          editScope.translate = dashboard.translate;
           editScope.definition = angular.copy(definition);
 
-          var adfEditTemplatePath = (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-edit.html';
-          if (definition.editTemplateUrl) {
-            adfEditTemplatePath = definition.editTemplateUrl;
-          }
-
+          var adfEditTemplatePath = dashboard.adfTemplatePath + 'widget-edit.html';
+         
           var opts = {
             scope: editScope,
             templateUrl: adfEditTemplatePath,
@@ -245,7 +227,7 @@ angular.module('adf')
       replace: true,
       restrict: 'EA',
       transclude: false,
-      templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget.html',
+      templateUrl: dashboard.adfTemplatePath + 'widget.html',
       scope: {
         definition: '=',
         col: '=column',
@@ -280,7 +262,7 @@ angular.module('adf')
           var fullScreenScope = $scope.$new();
           var opts = {
             scope: fullScreenScope,
-            templateUrl: (!dashboard.customDashboardTemplatePath ? adfTemplatePath : dashboard.customDashboardTemplatePath) + 'widget-fullscreen.html',
+            templateUrl: dashboard.adfTemplatePath + 'widget-fullscreen.html',
             size: definition.modalSize || 'lg', // 'sm', 'lg'
             backdrop: 'static',
             windowClass: (definition.fullScreen) ? 'dashboard-modal widget-fullscreen' : 'dashboard-modal'

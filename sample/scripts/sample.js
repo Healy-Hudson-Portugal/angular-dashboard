@@ -36,7 +36,7 @@ angular.module('sample', [
 ])
 .config(function (dashboardProvider, $routeProvider, localStorageServiceProvider) {
     dashboardProvider.widgetsPath('widgets/');
-    dashboardProvider.customDashboardTemplatePath('../sample/CustomTemplates/');
+    dashboardProvider.adfTemplatePath('../sample/customTemplates/');
   localStorageServiceProvider.setPrefix('adf');
 
   $routeProvider.when('/sample/01', {
@@ -47,10 +47,10 @@ angular.module('sample', [
     templateUrl: 'partials/sample.html',
     controller: 'sample02Ctrl'
   })
-  .when('/sample/03', {
-    templateUrl: 'partials/sampleWithFilter.html',
-    controller: 'sample03Ctrl'
-  })
+  // .when('/sample/03', {
+  //   templateUrl: 'partials/sampleWithFilter.html',
+  //   controller: 'sample03Ctrl'
+  // })
   .when('/sample/04', {
     templateUrl: 'partials/sample.html',
     controller: 'sample04Ctrl'
