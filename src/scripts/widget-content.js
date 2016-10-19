@@ -107,7 +107,7 @@ angular.module('adf')
         // handle promise rejection
         var msg = 'Could not resolve all promises';
         if (reason) {
-          msg += ': ' + reason;
+          msg = reason;
         }
         renderError($element, msg);
       });
