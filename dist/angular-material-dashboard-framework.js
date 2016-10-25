@@ -1955,6 +1955,13 @@ angular.module('adf')
                   };
               };
 
+              /* public method to change structure */
+              $scope.$on('adfChangeStructure', function (event, args) {
+                var targetStructure = dashboard.structures[args.key];
+
+                changeStructure(args.structure, targetStructure);
+              });
+              
               $scope.$on('adfAddWidgetDialog', function () {
                   $scope.addWidgetDialog();
               });
